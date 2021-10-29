@@ -1,0 +1,23 @@
+[
+  {
+    "group": "admin",
+    "permissions": [
+
+      {
+        "resource": "country/list",
+        "methods": ["POST", "GET", "PUT"],
+        "action": "allow"
+      },
+      {
+        "resource": "country/edit/*",
+        "methods": ["POST", "GET", "PUT"],
+        "action": "deny"
+      },
+      {
+        "resource": "country/",
+        "methods": ["POST", "GET", "PUT"],
+        "action": "allow"
+      }
+    ]
+  }
+]
