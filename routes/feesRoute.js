@@ -1,19 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const { feeType, feeGroup, feeTypeFeeGroup } = require("../models");
-
+const chalk = require('chalk')
 
 //route to list fee types
 router.get("/types", async function(req, res){
 
   try {
     console.log('i........ fee type s ')
-    const data = await feeType.findAll();
-    res.status(200).json(data);
+    var data = await feeType.findAll();
 
   } catch (err) {
-    console.log(err);
+    console.log(chalk.red.bold("feeRoute.js 15 ",err.message));
   };
+  res.status(200).json(data);
+
 
 });
 
