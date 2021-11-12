@@ -14,7 +14,7 @@ module.exports = {
       },
       dueDate: {
         type: Sequelize.DATE,
-        allowNull: false,
+        allowNull: false
       },
       amount: {
         type: Sequelize.DECIMAL,
