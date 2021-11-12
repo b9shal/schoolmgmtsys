@@ -24,12 +24,13 @@ router.post("/type/add", async function(req, res){
 
   try {
     const { name, description } = await req.body;
-    const data = await feeTypes.create({ name, description });
-    res.status(200).json(data);
+    var data = await feeTypes.create({ name, description });
+
 
   } catch (err) {
     console.log(err);
   };
+  res.status(200).json(data);
 
 });
 
@@ -38,14 +39,14 @@ router.post("/type/add", async function(req, res){
 router.delete("/type/delete/:id", async function(req, res){
   
   try {
-    const id = await req.params.id;
+    var id = await req.params.id;
     await feeTypes.destroy({ where: { id: id } });
-    res.status(200).send(`Fee type with id ${id} has been deleted`);
+
 
   } catch (err) {
     console.log(err);
   };
-
+  res.status(200).send(`Fee type with id ${id} has been deleted`);
 });
 
 
@@ -54,8 +55,8 @@ router.patch("/type/update/:id", async function(req, res){
   
   try {
     const { name, description } = await req.body;
-    const id = req.params.id;
-    const data = await feeTypes.update({
+    var id = req.params.id;
+    var data = await feeTypes.update({
       name: name,
       description: description
     },
@@ -63,14 +64,16 @@ router.patch("/type/update/:id", async function(req, res){
       where: {
         id: id
       }
-    });
+    }).catch(err =>{
+      console.log(chalk.red.bold("feeRoute.js 68 ",err.message))
+    })
     
-    res.status(200).send(`Fee type with id ${id} has been updated!!`);
+
 
   } catch (err) {
     console.log(err);
   };
-
+  res.status(200).send(`Fee type with id ${id} has been updated!!`);
 });
 
 
@@ -78,11 +81,12 @@ router.patch("/type/update/:id", async function(req, res){
 router.get("/groups", async function(req, res){
 
   try {
-    const feeGroupList = await feeTypesFeeGroups.findAll();
-    res.status(200).json(feeGroupList);
+    var feeGroupList = await feeTypesFeeGroups.findAll();
+
   } catch (err) {
     console.log(err);
   };
+  res.status(200).json(feeGroupList);
 })
 
 
