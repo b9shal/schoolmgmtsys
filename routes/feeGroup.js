@@ -98,20 +98,6 @@ router.get('/add',[
                 transaction.commit()
             }
 
-            /*feeTypeId: {
-                type: DataTypes.INTEGER,
-            },
-            feeGroupId: {
-                type: DataTypes.INTEGER,
-            },
-            dueDate: {
-                type: DataTypes.DATE,
-                    allowNull: false
-            },
-            amount: {
-                type: DataTypes.DECIMAL,
-                    allowNull: false
-            }*/
         }
         if(!success){
             msg = 'Opps!!!,Something went wrong'
