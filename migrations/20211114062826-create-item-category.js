@@ -1,28 +1,15 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('feeTypeFeeGroup', {
+    await queryInterface.createTable('itemCategory', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      feeTypeId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      feeGroupId: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-      },
-      dueDate: {
-        type: Sequelize.DATE,
-        allowNull: false
-      },
-      amount: {
-        type: Sequelize.DECIMAL,
-        allowNull: false
+      categoryName: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -35,6 +22,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('feeTypeFeeGroup');
+    await queryInterface.dropTable('itemCategory');
   }
 };

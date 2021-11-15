@@ -11,8 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      feeTypeFeeGroup.belongsTo(models.feeType, { foreignKey: "feeTypeId"});
-      feeTypeFeeGroup.belongsTo(models.feeGroup, { foreignKey: "feeGroupId" });
+      feeTypeFeeGroup.belongsTo(models.feeType, { 
+        foreignKey: "feeTypeId" });
+      feeTypeFeeGroup.belongsTo(models.feeGroup, { 
+        foreignKey: "feeGroupId" });
     }
   };
   feeTypeFeeGroup.init({
@@ -32,7 +34,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'feeTypeFeeGroup'
+    modelName: 'feeTypeFeeGroup',
+    tableName: 'feeTypeFeeGroup'
   });
   return feeTypeFeeGroup;
 };

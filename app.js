@@ -1,8 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const { sequelize } = require ("./models/index.js");
-const feesRoute = require ("./routes/feesRoute.js");
+const feesRoute = require("./routes/feesRoute");
+const inventoryRoute = require("./routes/inventoryRoute");
 
 let corsOptions = {
   origin: 'http://localhost:3000',
@@ -20,6 +20,7 @@ const PORT = process.env.PORT || 5004;
 
 //routes
 app.use("/api/fee", feesRoute);
+app.use("/api/inventory", inventoryRoute);
 
 
 /*

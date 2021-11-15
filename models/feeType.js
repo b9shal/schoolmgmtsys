@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       feeType.hasMany(models.feeTypeFeeGroup, {
         foreignKey: "feeTypeId",
-              });
+      });
     }
   };
   feeType.init({
@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'feeType',
+    tableName: "feeType"
   });
   return feeType;
 };

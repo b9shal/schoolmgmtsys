@@ -2,32 +2,28 @@
 const {
   Model
 } = require('sequelize');
+const itemCategory = require('./itemCategory');
 module.exports = (sequelize, DataTypes) => {
-  class feeGroup extends Model {
+  class item extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      feeGroup.hasMany(models.feeTypeFeeGroup, {
-        foreignKey: "feeGroupId",
-      });
+      item.belongsTo(itemCategory, { 
+        foreignKey: "itemCategoryId" });
     }
   };
-  feeGroup.init({
-    groupName: {
+  item.init({
+    itemName: {
       type: DataTypes.STRING,
-      allowNull: false,
-    },
-    description: {
-      type: DataTypes.STRING,
-      allowNull: true
+      allowNull: false
     }
   }, {
     sequelize,
-    modelName: 'feeGroup',
-    tableName: "feeGroup"
+    modelName: 'item',
+    tableName: 'item'
   });
-  return feeGroup;
+  return item;
 };
