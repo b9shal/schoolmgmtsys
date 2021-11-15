@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const feesRoute = require("./routes/feesRoute");
+const feeGroupRoute = require("./routes/feeGroup");
 const inventoryRoute = require("./routes/inventoryRoute");
 
 let corsOptions = {
@@ -20,6 +21,7 @@ const PORT = process.env.PORT || 5004;
 
 //routes
 app.use("/api/fee", feesRoute);
+app.use("/api/feeGroup", feeGroupRoute);
 app.use("/api/inventory", inventoryRoute);
 
 
