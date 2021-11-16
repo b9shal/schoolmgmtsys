@@ -143,10 +143,10 @@ router.patch("/group/update/:id", async function(req, res){
   try {
     const groupId = req.params.id;
     const { 
-      groupName, 
+      groupName,
       description,
       dueDate,
-      amount 
+      amount
     } = await req.body;
     await feeTypeFeeGroup.update({
       name: groupName,
