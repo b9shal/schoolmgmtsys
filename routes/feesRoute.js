@@ -37,7 +37,7 @@ router.get("/list", async function(req, res){
 router.post("/add",[
   body("name")
   .isLength({ min: 1 })
-  .withMessage("name should at least 1 char long")
+  .withMessage("name should be atleast 1 char long")
 ], async function(req, res){
 
   try {
