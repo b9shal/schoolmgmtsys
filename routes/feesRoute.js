@@ -42,25 +42,32 @@ router.post("/add",[
 
   try {
 
-    console.log(req.body)
+    console.log('req body....... ',req.body)
     var message = "add success"
     var status = 200
     var success = true
     var validationError = null
     const errors = validationResult(req)
-    var transaction = ""
+
     if(!errors.isEmpty()) {
       message = "add fail"
       status = 400
       success = false
       validationError = errors.array()
     }else {
-      transaction = models.sequelize.transaction()
+      var transaction = await models.sequelize.transaction()
       const { name, description } = await req.body
       const data = await feeType.create({ name, description }, { transaction }).catch(err => {
-        console.log("err is here")
+        console.log("err is here ",err.message)
+        success = false
       })
-      transaction.commit()
+      success = false
+      if(success){
+        transaction.commit()
+      }else{
+        transaction.rollback()
+      }
+
       console.log(data)
     }
     
@@ -68,7 +75,7 @@ router.post("/add",[
     var message = "add fail"
     var status = 400
     var success = false
-    transaction.rollback()
+
     console.log(err)
   }
   res.status(status).json({
