@@ -1,15 +1,31 @@
 const express = require("express");
 const router = express.Router();
 const { feeType, feeGroup, feeTypeFeeGroup } = require("../models");
-const chalk = require('chalk')
+const chalk = require('chalk');
+const { body, validationResult } = require("express-validator");
+const models = require("../models")
+
 
 //route to list fee types
-router.get("/types", async function(req, res){
+router.get("/list", async function(req, res){
 
   try {
-    console.log('Listing fee types')
-    const data = await feeType.findAll();
-    res.status(200).json(data);
+
+    var message = "add success"
+    var status = 200
+    var success = true
+    var validationError = null
+    const errors = validationResult(req)
+    if(!errors.isEmpty()) {
+      message = "add fail"
+      status = 400
+      success = false
+      validationError = errors.array()
+    }else {
+      var transaction = models.sequelize.transaction()
+      const data = await feeType.findAll();
+      res.status(200).json(data);
+    }
 
   } catch (err) {
     console.log(chalk.red.bold("feeRoute.js 14 ",err.message));
@@ -18,24 +34,55 @@ router.get("/types", async function(req, res){
 
 
 //route to add a fee type
-router.post("/type/add", async function(req, res){
+router.post("/add",[
+  body("name")
+  .isLength({ min: 1 })
+  .withMessage("name should at least 1 char long")
+], async function(req, res){
 
   try {
-    const { name, description } = await req.body;
-    await feeType.create({ name, description });
-    res.status(200).json(data);
 
+    console.log(req.body)
+    var message = "add success"
+    var status = 200
+    var success = true
+    var validationError = null
+    const errors = validationResult(req)
+    var transaction = ""
+    if(!errors.isEmpty()) {
+      message = "add fail"
+      status = 400
+      success = false
+      validationError = errors.array()
+    }else {
+      transaction = models.sequelize.transaction()
+      const { name, description } = await req.body
+      const data = await feeType.create({ name, description }, { transaction }).catch(err => {
+        console.log("err is here")
+      })
+      transaction.commit()
+      console.log(data)
+    }
+    
   } catch (err) {
-    console.log(err);
-  };
-
-});
+    var message = "add fail"
+    var status = 400
+    var success = false
+    transaction.rollback()
+    console.log(err)
+  }
+  res.status(status).json({
+    message,
+    success,
+    validationError
+  })
+})
 
 //route to delete a fee type
-router.delete("/type/delete/:id", async function(req, res){
+router.delete("/delete/:id", async function(req, res){
   
   try {
-    const id = await req.params.id;
+    const id = req.params.id;
     await feeType.destroy({ where: { id: id } });
     res.status(200).send(`Fee type with id ${id} has been deleted`);
 
@@ -46,18 +93,18 @@ router.delete("/type/delete/:id", async function(req, res){
 
 
 //route to update a fee type
-router.patch("/type/update/:id", async function(req, res){
+router.patch("/update/:id", async function(req, res){
   
   try {
     const { name, description } = await req.body;
     const id = req.params.id;
     await feeType.update({
-      name: name,
+      name,
       description
     },
     {
       where: {
-        id: id
+        id
       }
     }).catch(err =>{
       console.log(chalk.red.bold("feeRoute.js 63 ",err.message))
