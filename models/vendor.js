@@ -11,27 +11,30 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-    }
+      vendor.belongsTo(stock, { 
+        foreignKey: "stockId" 
+      });
+    };
   };
   vendor.init({
     vendorName: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
     phone: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
     address1: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
     address2: {
       type: DataTypes.STRING,
     },
     email: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     }
   }, {
     sequelize,
