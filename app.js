@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
+
 const feeTypeRoute = require("./routes/feeType")
 const feeGroupRoute = require("./routes/feeGroup")
 const vendorRoute = require("./routes/vendor");
@@ -10,6 +11,9 @@ const fineRoute = require("./routes/fine");
 const feeReminderRoute = require("./routes/feeReminder");
 const stockRoute = require("./routes/stock");
 const accountRoute = require("./routes/account");
+const feeTypeRoute = require("./routes/feesRoute");
+const feeGroupRoute = require("./routes/feeGroup");
+const auth = require('./middleware/auth')
 
 let corsOptions = {
   origin: 'http://localhost:3000',
@@ -25,6 +29,7 @@ dotenv.config();
 const PORT = process.env.PORT || 5004;
 
 //routes
+app.use(auth.isAuthenticate)
 app.use("/api/feeGroup", feeGroupRoute);
 app.use("/api/feeType", feeTypeRoute);
 app.use("/api/vendor", vendorRoute);
