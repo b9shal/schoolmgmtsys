@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
       feeType.hasMany(models.feeTypeFeeGroup, {
         foreignKey: "feeTypeId",
       });
+      
+      feeType.hasOne(models.fine, {
+        foreignKey: "feeTypeId",
+      });
     }
   };
   feeType.init({

@@ -2,35 +2,29 @@ const express = require("express");
 const router = express.Router();
 const chalk = require('chalk');
 const { body, validationResult } = require("express-validator")
-const { vendor } = require("../models");
+const { account } = require("../models");
 const models = require("../models");
 
 const validate = [
-  body("vendorName")
+  body("accountName")
   .isString()
-  .withMessage("vendor name should be a string")
-  .trim()
-  .isLength({ min: 1, max: 20 })
-  .withMessage("vendor name should be atleast 1 char and atmost 20 chars long"),
-  body("phone")
-  .isMobilePhone()
-  .withMessage("phone number should be a valid phone number"),
-  body("address1")
-  .isString()
-  .withMessage("address1 should be a string")
+  .withMessage("account name should be a string")
   .trim()
   .isLength({ min: 1, max: 255 })
-  .withMessage("address1 should at least 1 and atmost 255 chars long")
+  .withMessage("vendor name should be between 1 to 255 chars"),
+  body("accountNumber")
+  .isString()
+  .withMessage("account number should be a valid account number")
 ]
 
-//route to list vendors
+//route to list accounts
 router.get("/list", async function(req, res){
 
   try {
     var success = true
     var message = "list success"
     var status = 200
-    const vendorList = await vendor.findAll()
+    const data = await account.findAll()
     .catch(err => {
       success = false
       message = "list fail"
@@ -41,7 +35,7 @@ router.get("/list", async function(req, res){
     res.status(status).json({
       success,
       message,
-      vendorList
+      data
     });
     
   } catch (err) {
@@ -59,7 +53,7 @@ router.get("/list", async function(req, res){
 });
 
 
-//route to add a vendor
+//route to add an account
 router.post("/add", validate, async function(req, res) {
 
   try {
@@ -85,19 +79,17 @@ router.post("/add", validate, async function(req, res) {
     }else {
 
       const { 
-        vendorName,
-        phone,
-        address1,
-        address2,
-        email
+        accountName,
+        accountNumber,
+        description,
+        openingBalance
       } = await req.body;
       transaction = await models.sequelize.transaction()
-      await vendor.create({
-        vendorName, 
-        phone,
-        address1,
-        address2,
-        email
+      await account.create({ 
+        accountName,
+        accountNumber,
+        description,
+        openingBalance
       },
       {
         transaction
@@ -105,12 +97,12 @@ router.post("/add", validate, async function(req, res) {
         message = "add fail"
         status = 500
         success = false
-        console.log(chalk.red.bold(err.message))
+        console.log(chalk.red.bold("im from first inner catch",err.message))
       })
       if(!success){
-        await transaction.commit()
-      }else {
         await transaction.rollback()
+      }else {
+        await transaction.commit()
       }
     }
   }catch (err) {
@@ -121,12 +113,13 @@ router.post("/add", validate, async function(req, res) {
   };
   res.status(status).json({
     success,
-    message
+    message,
+    validationError
   })
 });
 
 
-//route to delete a vendor
+//route to delete an account
 router.delete("/delete/:id", async function(req, res){
 
   try {
@@ -134,7 +127,7 @@ router.delete("/delete/:id", async function(req, res){
     var message = "delete success"
     var status = 200
     const id = req.params.id;
-    await vendor.destroy({ 
+    await account.destroy({ 
       where: {
         id
       }
@@ -159,7 +152,7 @@ router.delete("/delete/:id", async function(req, res){
 });
 
 
-//route to update a vendor
+//route to update an account
 router.patch("/edit/:id", validate, async function(req, res){
 
   try {
@@ -185,19 +178,17 @@ router.patch("/edit/:id", validate, async function(req, res){
     }else {
       const id = req.params.id
       const { 
-        vendorName,
-        phone,
-        address1,
-        address2,
-        email
+        accountName,
+        accountNumber,
+        description,
+        openingBalance
       } = await req.body;
       transaction = await models.sequelize.transaction()
-      await vendor.update({
-        vendorName, 
-        phone,
-        address1,
-        address2,
-        email
+      await account.update({ 
+        accountName,
+        accountNumber,
+        description,
+        openingBalance
       },
       {
         where: { id }
@@ -214,7 +205,7 @@ router.patch("/edit/:id", validate, async function(req, res){
         await transaction.rollback()
       }else {
         await transaction.commit()
-      }    
+      }
     }
   }catch (err) {
     success = false
@@ -224,12 +215,13 @@ router.patch("/edit/:id", validate, async function(req, res){
   };
   res.status(status).json({
     success,
-    message
+    message,
+    validationError
   })
 });
 
 
-//route to delete a vendor
+//route to delete an account
 router.delete("/delete/:id", async function(req, res){
 
   try {
@@ -237,10 +229,8 @@ router.delete("/delete/:id", async function(req, res){
     var message = "delete success"
     var status = 200
     const id = req.params.id;
-    await vendor.destroy({ 
-      where: {
-        id
-      }
+    await account.destroy({ 
+      where: { id }
     }).catch(err => {
       success = false
       message = "delete fail"

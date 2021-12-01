@@ -1,21 +1,28 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('fine', {
+    await queryInterface.createTable('feeTypeFeeGroup', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      fineType: {
-        type: Sequelize.STRING
+      dueDate: {
+        allowNull: false,
+        type: Sequelize.DATE
       },
-      fineValue: {
+      amount: {
+        allowNull: false,
         type: Sequelize.DECIMAL
       },
-      lateFeeFrequency: {
-        type: Sequelize.STRING
+      feeTypeId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+      },
+      feeGroupId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
@@ -28,6 +35,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('fine');
+    await queryInterface.dropTable('feeTypeFeeGroup');
   }
 };

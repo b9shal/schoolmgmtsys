@@ -11,15 +11,18 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      fine.belongsTo(models.feeType, { foreignKey: "feeTypeId" })
+      fine.belongsTo(models.feeGroup, { foreignKey: "feeGroupId" })
     }
   };
   fine.init({
-    fineType: DataTypes.INTEGER,
+    fineType: DataTypes.STRING,
     fineValue: DataTypes.DECIMAL,
-    lateFeeFrequency: DataTypes.INTEGER
+    lateFeeFrequency: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'fine',
+    tableName: "fine"
   });
   return fine;
 };
