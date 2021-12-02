@@ -1,8 +1,8 @@
 {
   "development": {
-    "username": "admin",
-    "password": "ADMIN@admin12345",
-    "database": "sms",
+    "username": "kushmitechcom_root",
+    "password": "Av_=l;Qj5Ni9",
+    "database": "kushmitechcom_sms",
     "host": "localhost",
     "dialect": "mysql"
   },
