@@ -3,31 +3,32 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class feeGroup extends Model {
+  class voucherHead extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      feeGroup.hasMany(models.feeTypeFeeGroup, { foreignKey: "feeGroupId" });
+      // define association here
 
-      feeGroup.hasOne(models.fine, { foreignKey: "feeGroupId" })
+      voucherHead.hasMany(models.deposit, { foreignKey: "voucherHeadId" })
+      voucherHead.hasMany(models.expense, { foreignKey: "voucherHeadId" })
     }
   };
-  feeGroup.init({
-    groupName: {
+  voucherHead.init({
+    voucherName: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
-    description: {
+    type: {
       type: DataTypes.STRING,
-      allowNull: true
+      allowNull: false
     }
   }, {
     sequelize,
-    modelName: 'feeGroup',
-    tableName: "feeGroup"
+    modelName: 'voucherHead',
+    tableName: 'voucherHead'
   });
-  return feeGroup;
+  return voucherHead;
 };

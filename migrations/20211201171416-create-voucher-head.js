@@ -1,20 +1,19 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('fine', {
+    await queryInterface.createTable('voucherHead', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      fineType: {
+      voucherName: {
+        allowNull: false,
         type: Sequelize.STRING
       },
-      fineValue: {
-        type: Sequelize.DECIMAL
-      },
-      lateFeeFrequency: {
+      type: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       createdAt: {
@@ -28,6 +27,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('fine');
+    await queryInterface.dropTable('voucherHead');
   }
 };

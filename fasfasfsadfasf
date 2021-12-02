@@ -1,0 +1,48 @@
+[33mcommit d7a9096b115a04a7fa37856fe39d8eff77fd0446[m[33m ([m[1;36mHEAD -> [m[1;32mnewbranch[m[33m)[m
+Author: b9shal <bishal.k03@gmail.com>
+Date:   Mon Nov 15 08:00:18 2021 +0545
+
+    added routes for inventory
+
+[33mcommit 219ced5ba46b8fa66dd44f8c6fc76a26fbe9239e[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmaster[m[33m)[m
+Author: sslimbu <sanjiv.subbahere@gmail.com>
+Date:   Fri Nov 12 15:06:31 2021 +0545
+
+    chalk install
+
+[33mcommit 8ecbae7db581b066e8692d3656c54ac8ad76f879[m
+Author: sslimbu <sanjiv.subbahere@gmail.com>
+Date:   Fri Nov 12 15:03:22 2021 +0545
+
+    chalk install
+
+[33mcommit 6f6f956464b517a0fbd463b719bbbff4e5731524[m
+Merge: 7f2abe6 2ddd788
+Author: sslimbu <sanjiv.subbahere@gmail.com>
+Date:   Fri Nov 12 15:00:17 2021 +0545
+
+    few first fix
+
+[33mcommit 2ddd788e723d059158b09184c8314fcea6c5e634[m
+Author: b9shal <bishal.k03@gmail.com>
+Date:   Fri Nov 12 14:03:02 2021 +0545
+
+    first commit
+
+[33mcommit 5467f31e90f952f95a17eb43f0eddd8bd0133e0b[m
+Author: b9shal <bishal.k03@gmail.com>
+Date:   Fri Nov 12 08:10:01 2021 +0545
+
+    first commit
+
+[33mcommit 7f2abe6a6e79472899753995c3b22153c52fcae2[m
+Author: sslimbu <sanjiv.subbahere@gmail.com>
+Date:   Fri Oct 29 18:00:08 2021 +0545
+
+    fix
+
+[33mcommit 85e013f9367540e2de605163a76d1babecbd4b9a[m
+Author: sslimbu <sanjiv.subbahere@gmail.com>
+Date:   Fri Oct 29 16:42:07 2021 +0545
+
+    git sms first project upload

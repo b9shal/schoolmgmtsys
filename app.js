@@ -1,9 +1,20 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const { sequelize } = require ("./models/index.js");
-const feesRoute = require ("./routes/feesRoute.js");
 
+const feeTypeRoute = require("./routes/feeType")
+const feeGroupRoute = require("./routes/feeGroup")
+const vendorRoute = require("./routes/vendor");
+const itemRoute = require("./routes/item");
+const itemCategoryRoute = require("./routes/itemCategory");
+const fineRoute = require("./routes/fine");
+const feeReminderRoute = require("./routes/feeReminder");
+const stockRoute = require("./routes/stock");
+const accountRoute = require("./routes/account");
+const voucherHeadRoute = require("./routes/voucherHead");
+const expenseRoute = require("./routes/expense");
+const depositRoute = require("./routes/deposit");
+const auth = require('./middleware/auth');
 let corsOptions = {
   origin: 'http://localhost:3000',
   optionsSuccessStatus: 200,
@@ -15,19 +26,23 @@ app.use(cors(corsOptions));
 app.use(express.json({ extended: true }));
 
 dotenv.config();
-
 const PORT = process.env.PORT || 5004;
 
 //routes
-app.use("/api/fee", feesRoute);
+app.use("/api/feeGroup", feeGroupRoute);
+app.use("/api/feeType", feeTypeRoute);
+app.use("/api/vendor", vendorRoute);
+app.use("/api/item", itemRoute);
+app.use("/api/itemCategory", itemCategoryRoute);
+app.use("/api/fine", fineRoute);
+app.use("/api/feeReminder", feeReminderRoute);
+app.use("/api/stock", stockRoute);
+app.use("/api/account", accountRoute);
+app.use("/api/voucherHead", voucherHeadRoute);
+app.use("/api/expense", expenseRoute);
+app.use("/api/deposit", depositRoute);
+app.use(auth.isAuthenticate)
 
-
-/*
-app.listen(PORT, async () => {
-  // await sequelize.authenticate();
-  console.log(`server running at ${PORT}`);
-  console.log("Database connected and running");
-});*/
 
 app.use((error,req,res,next)=>{
   res.status(error.status ||  500);

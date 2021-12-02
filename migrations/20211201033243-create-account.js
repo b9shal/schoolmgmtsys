@@ -1,28 +1,26 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('feeTypeFeeGroup', {
+    await queryInterface.createTable('account', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      feeTypeId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      feeGroupId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      dueDate: {
-        type: Sequelize.DATE,
+      accountName: {
+        type: Sequelize.STRING,
         allowNull: false
       },
-      amount: {
-        type: Sequelize.DECIMAL,
-        allowNull: false,
+      accountNumber: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      description: {
+        type: Sequelize.STRING
+      },
+      openingBalance: {
+        type: Sequelize.DECIMAL
       },
       createdAt: {
         allowNull: false,
@@ -35,6 +33,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('feeTypeFeeGroup');
+    await queryInterface.dropTable('account');
   }
 };

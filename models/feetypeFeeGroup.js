@@ -11,28 +11,34 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      feeTypeFeeGroup.belongsTo(models.feeType, { foreignKey: "feeTypeId"});
-      feeTypeFeeGroup.belongsTo(models.feeGroup, { foreignKey: "feeGroupId" });
+      feeTypeFeeGroup.belongsTo(models.feeType, { foreignKey: "feeTypeId" })
+      
+      feeTypeFeeGroup.belongsTo(models.feeGroup, { foreignKey: "feeGroupId" })
+
+      feeTypeFeeGroup.hasOne(models.fine, { foreignKey: "feeTypeFeeGroupId" })
     }
   };
   feeTypeFeeGroup.init({
+    dueDate: {
+      allowNull: false,
+      type: DataTypes.DATE
+    },
     feeTypeId: {
       type: DataTypes.INTEGER,
+      allowNull: false
     },
     feeGroupId: {
       type: DataTypes.INTEGER,
-    },
-    dueDate: {
-      type: DataTypes.DATE,
       allowNull: false
     },
     amount: {
       type: DataTypes.DECIMAL,
-      allowNull: false
+      allowNull: false,
     }
   }, {
     sequelize,
-    modelName: 'feeTypeFeeGroup'
+    modelName: 'feeTypeFeeGroup',
+    tableName: 'feeTypeFeeGroup',
   });
   return feeTypeFeeGroup;
 };

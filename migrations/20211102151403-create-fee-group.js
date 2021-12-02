@@ -14,13 +14,6 @@ module.exports = {
       description: {
         type: Sequelize.STRING
       },
-      dueDate: {
-        type: Sequelize.DATE
-      },
-      amount: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
