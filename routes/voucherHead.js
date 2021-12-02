@@ -2,35 +2,31 @@ const express = require("express");
 const router = express.Router();
 const chalk = require('chalk');
 const { body, validationResult } = require("express-validator")
-const { vendor } = require("../models");
+const { voucherHead } = require("../models");
 const models = require("../models");
 
 const validate = [
-  body("vendorName")
+  body("voucherName")
   .isString()
-  .withMessage("vendor name should be a string")
+  .withMessage("voucher head should be a string")
   .trim()
   .isLength({ min: 1, max: 20 })
-  .withMessage("vendor name should be atleast 1 char and atmost 20 chars long"),
-  body("phone")
-  .isMobilePhone()
-  .withMessage("phone number should be a valid phone number"),
-  body("address1")
+  .withMessage("voucher head should be between 1 to 20 chars long"),
+  body('type')
   .isString()
-  .withMessage("address1 should be a string")
-  .trim()
-  .isLength({ min: 1, max: 255 })
-  .withMessage("address1 should at least 1 and atmost 255 chars long")
+  .withMessage("voucher type should be a string")
+  .isIn(['Expense', 'Income'])
+  .withMessage("voucher type should be one of Expense or Income")
 ]
 
-//route to list vendors
+//route to list voucher
 router.get("/list", async function(req, res){
 
   try {
     var success = true
     var message = "list success"
     var status = 200
-    const vendorList = await vendor.findAll()
+    const data = await voucherHead.findAll()
     .catch(err => {
       success = false
       message = "list fail"
@@ -41,7 +37,7 @@ router.get("/list", async function(req, res){
     res.status(status).json({
       success,
       message,
-      vendorList
+      data
     });
     
   } catch (err) {
@@ -59,7 +55,7 @@ router.get("/list", async function(req, res){
 });
 
 
-//route to add a vendor
+//route to add a voucher
 router.post("/add", validate, async function(req, res) {
 
   try {
@@ -85,19 +81,13 @@ router.post("/add", validate, async function(req, res) {
     }else {
 
       const { 
-        vendorName,
-        phone,
-        address1,
-        address2,
-        email
+        voucherName,
+        type
       } = await req.body;
       transaction = await models.sequelize.transaction()
-      await vendor.create({
-        vendorName, 
-        phone,
-        address1,
-        address2,
-        email
+      await voucherHead.create({ 
+        voucherName,
+        type
       },
       {
         transaction
@@ -108,10 +98,12 @@ router.post("/add", validate, async function(req, res) {
         console.log(chalk.red.bold(err.message))
       })
       if(!success){
+        message = "add fail"
+        status = 500
+        success = false
         await transaction.rollback()
       }else {
         await transaction.commit()
-
       }
     }
   }catch (err) {
@@ -128,40 +120,7 @@ router.post("/add", validate, async function(req, res) {
 });
 
 
-//route to delete a vendor
-router.delete("/delete/:id", async function(req, res){
-
-  try {
-    var success = true
-    var message = "delete success"
-    var status = 200
-    const id = req.params.id;
-    await vendor.destroy({ 
-      where: {
-        id
-      }
-    }).catch(err => {
-      success = false
-      message = "delete fail"
-      status = 500 
-      console.log(err.message)
-    })
-
-  } catch (err) {
-    success = false
-    message = "delete fail"
-    status = 400
-    console.log(err);
-  };
-
-  res.status(status).json({
-    success,
-    message
-  })
-});
-
-
-//route to update a vendor
+//route to update a voucher
 router.patch("/edit/:id", validate, async function(req, res){
 
   try {
@@ -187,19 +146,13 @@ router.patch("/edit/:id", validate, async function(req, res){
     }else {
       const id = req.params.id
       const { 
-        vendorName,
-        phone,
-        address1,
-        address2,
-        email
+        voucherName,
+        type
       } = await req.body;
       transaction = await models.sequelize.transaction()
-      await vendor.update({
-        vendorName, 
-        phone,
-        address1,
-        address2,
-        email
+      await voucherHead.update({ 
+        voucherName,
+        type
       },
       {
         where: { id }
@@ -213,9 +166,6 @@ router.patch("/edit/:id", validate, async function(req, res){
         console.log(chalk.red.bold("im from first inner catch",err.message))
       })
       if(!success) {
-        message = "edit fail"
-        status = 500
-        success = false
         await transaction.rollback()
       }else {
         await transaction.commit()
@@ -229,8 +179,40 @@ router.patch("/edit/:id", validate, async function(req, res){
   };
   res.status(status).json({
     success,
-    message,
-    validationError
+    message
+  })
+});
+
+
+//route to delete a voucher
+router.delete("/delete/:id", async function(req, res){
+
+  try {
+    var success = true
+    var message = "delete success"
+    var status = 200
+    const id = req.params.id;
+    await voucherHead.destroy({ 
+      where: {
+        id
+      }
+    }).catch(err => {
+      success = false
+      message = "delete fail"
+      status = 500 
+      console.log(err.message)
+    })
+
+  } catch (err) {
+    success = false
+    message = "delete fail"
+    status = 400
+    console.log(err);
+  };
+
+  res.status(status).json({
+    success,
+    message
   })
 });
 

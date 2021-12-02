@@ -2,25 +2,26 @@ const express = require("express");
 const router = express.Router();
 const chalk = require('chalk');
 const { body, validationResult } = require("express-validator")
-const { vendor } = require("../models");
+const { deposit, voucherHead, account } = require("../models");
 const models = require("../models");
 
 const validate = [
-  body("vendorName")
+  body("ref")
   .isString()
-  .withMessage("vendor name should be a string")
-  .trim()
-  .isLength({ min: 1, max: 20 })
-  .withMessage("vendor name should be atleast 1 char and atmost 20 chars long"),
-  body("phone")
-  .isMobilePhone()
-  .withMessage("phone number should be a valid phone number"),
-  body("address1")
-  .isString()
-  .withMessage("address1 should be a string")
+  .withMessage("ref should be a string")
   .trim()
   .isLength({ min: 1, max: 255 })
-  .withMessage("address1 should at least 1 and atmost 255 chars long")
+  .withMessage("ref should be atleast 1 char and atmost 20 chars long"),
+  body("amount")
+  .isNumeric()
+  .withMessage("amount should be a number"),
+  body("date")
+  .isString()
+  .withMessage("date is a required field"),
+  body("payVia")
+  .isString()
+  .withMessage("payment method is required")
+  .isIn(["Cash", "Card", "Cheque", "Bank Transfer"])
 ]
 
 //route to list vendors
@@ -30,7 +31,13 @@ router.get("/list", async function(req, res){
     var success = true
     var message = "list success"
     var status = 200
-    const vendorList = await vendor.findAll()
+    const data = await deposit.findAll({
+      attributes: ["id", "ref", "amount", "description", "payVia", "date"],
+      include: [
+      { model: account, attributes: ["accountName"] },
+      { model: voucherHead, attributes: ["voucherName"] }
+    ]
+    })
     .catch(err => {
       success = false
       message = "list fail"
@@ -41,7 +48,7 @@ router.get("/list", async function(req, res){
     res.status(status).json({
       success,
       message,
-      vendorList
+      data
     });
     
   } catch (err) {
@@ -85,19 +92,23 @@ router.post("/add", validate, async function(req, res) {
     }else {
 
       const { 
-        vendorName,
-        phone,
-        address1,
-        address2,
-        email
+        accountId,
+        voucherHeadId,
+        ref,
+        amount,
+        date,
+        payVia,
+        description
       } = await req.body;
       transaction = await models.sequelize.transaction()
-      await vendor.create({
-        vendorName, 
-        phone,
-        address1,
-        address2,
-        email
+      await deposit.create({ 
+        accountId,
+        voucherHeadId,
+        ref,
+        amount,
+        date,
+        payVia,
+        description
       },
       {
         transaction
@@ -136,7 +147,7 @@ router.delete("/delete/:id", async function(req, res){
     var message = "delete success"
     var status = 200
     const id = req.params.id;
-    await vendor.destroy({ 
+    await deposit.destroy({ 
       where: {
         id
       }
@@ -187,19 +198,23 @@ router.patch("/edit/:id", validate, async function(req, res){
     }else {
       const id = req.params.id
       const { 
-        vendorName,
-        phone,
-        address1,
-        address2,
-        email
+        accountId,
+        voucherHeadId,
+        ref,
+        amount,
+        date,
+        payVia,
+        description
       } = await req.body;
       transaction = await models.sequelize.transaction()
-      await vendor.update({
-        vendorName, 
-        phone,
-        address1,
-        address2,
-        email
+      await deposit.update({ 
+        accountId,
+        voucherHeadId,
+        ref,
+        amount,
+        date,
+        payVia,
+        description
       },
       {
         where: { id }
@@ -213,9 +228,6 @@ router.patch("/edit/:id", validate, async function(req, res){
         console.log(chalk.red.bold("im from first inner catch",err.message))
       })
       if(!success) {
-        message = "edit fail"
-        status = 500
-        success = false
         await transaction.rollback()
       }else {
         await transaction.commit()

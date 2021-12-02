@@ -11,10 +11,10 @@ const fineRoute = require("./routes/fine");
 const feeReminderRoute = require("./routes/feeReminder");
 const stockRoute = require("./routes/stock");
 const accountRoute = require("./routes/account");
-const feeTypeRoute = require("./routes/feesRoute");
-const feeGroupRoute = require("./routes/feeGroup");
-const auth = require('./middleware/auth')
-
+const voucherHeadRoute = require("./routes/voucherHead");
+const expenseRoute = require("./routes/expense");
+const depositRoute = require("./routes/deposit");
+const auth = require('./middleware/auth');
 let corsOptions = {
   origin: 'http://localhost:3000',
   optionsSuccessStatus: 200,
@@ -29,7 +29,6 @@ dotenv.config();
 const PORT = process.env.PORT || 5004;
 
 //routes
-app.use(auth.isAuthenticate)
 app.use("/api/feeGroup", feeGroupRoute);
 app.use("/api/feeType", feeTypeRoute);
 app.use("/api/vendor", vendorRoute);
@@ -39,6 +38,10 @@ app.use("/api/fine", fineRoute);
 app.use("/api/feeReminder", feeReminderRoute);
 app.use("/api/stock", stockRoute);
 app.use("/api/account", accountRoute);
+app.use("/api/voucherHead", voucherHeadRoute);
+app.use("/api/expense", expenseRoute);
+app.use("/api/deposit", depositRoute);
+app.use(auth.isAuthenticate)
 
 
 app.use((error,req,res,next)=>{
