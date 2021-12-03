@@ -1,49 +1,29 @@
 const express = require("express");
 const router = express.Router();
-const chalk = require('chalk');
 const { body, validationResult } = require("express-validator")
-const { deposit, voucherHead, account } = require("../models");
-const models = require("../models");
+const { section } = require("../models");
+const models  = require("../models");
 
 const validate = [
-  body("ref")
+  body("sectionName")
   .isString()
-  .withMessage("ref should be a string")
+  .withMessage("section name should be a string")
   .trim()
-  .isLength({ min: 1, max: 255 })
-  .withMessage("ref should be atleast 1 char and atmost 20 chars long"),
-  body("amount")
+  .isLength({ min: 1, max: 100 })
+  .withMessage("section name should be between 1 to 100 chars long"),
+  body("capacity")
   .isNumeric()
-  .withMessage("amount should be a number"),
-  body("date")
-  .isString()
-  .withMessage("date is a required field"),
-  body("payVia")
-  .isString()
-  .withMessage("payment method is required")
-  .isIn(["Cash", "Card", "Cheque", "Bank Transfer"])
+  .withMessage("section capacity should be a number")
 ]
 
-//route to list vendors
+
 router.get("/list", async function(req, res){
 
   try {
     var success = true
     var message = "list success"
     var status = 200
-    const data = await deposit.findAll({
-      attributes: ["id", "ref", "amount", "description", "payVia", "date"],
-      include: [
-      { model: account, attributes: ["accountName"] },
-      { model: voucherHead, attributes: ["voucherName"] }
-    ]
-    })
-    .catch(err => {
-      success = false
-      message = "list fail"
-      status = 500
-      console.log(err.message)
-    })
+    const data = await section.findAll()
 
     res.status(status).json({
       success,
@@ -55,6 +35,7 @@ router.get("/list", async function(req, res){
     success = false
     message = "list fail"
     status = 500
+    console.log(err.message)
 
     res.status(status).json({
       success,
@@ -65,7 +46,6 @@ router.get("/list", async function(req, res){
 });
 
 
-//route to add a vendor
 router.post("/add", validate, async function(req, res) {
 
   try {
@@ -89,39 +69,21 @@ router.post("/add", validate, async function(req, res) {
         })
       })
     }else {
-
-      const { 
-        accountId,
-        voucherHeadId,
-        ref,
-        amount,
-        date,
-        payVia,
-        description
-      } = await req.body;
+      const { sectionName, capacity } = await req.body
       transaction = await models.sequelize.transaction()
-      await deposit.create({ 
-        accountId,
-        voucherHeadId,
-        ref,
-        amount,
-        date,
-        payVia,
-        description
-      },
+      await section.create({ sectionName, capacity },
       {
         transaction
       }).catch(err => {
         message = "add fail"
         status = 500
         success = false
-        console.log(chalk.red.bold(err.message))
+        console.log(err);
       })
-      if(!success){
+      if(!success) {
         await transaction.rollback()
       }else {
         await transaction.commit()
-
       }
     }
   }catch (err) {
@@ -138,41 +100,7 @@ router.post("/add", validate, async function(req, res) {
 });
 
 
-//route to delete a vendor
-router.delete("/delete/:id", async function(req, res){
-
-  try {
-    var success = true
-    var message = "delete success"
-    var status = 200
-    const id = req.params.id;
-    await deposit.destroy({ 
-      where: {
-        id
-      }
-    }).catch(err => {
-      success = false
-      message = "delete fail"
-      status = 500 
-      console.log(err.message)
-    })
-
-  } catch (err) {
-    success = false
-    message = "delete fail"
-    status = 400
-    console.log(err);
-  };
-
-  res.status(status).json({
-    success,
-    message
-  })
-});
-
-
-//route to update a vendor
-router.patch("/edit/:id", validate, async function(req, res){
+router.patch("/edit/:id", validate, async function(req, res) {
 
   try {
 
@@ -196,41 +124,22 @@ router.patch("/edit/:id", validate, async function(req, res){
       })
     }else {
       const id = req.params.id
-      const { 
-        accountId,
-        voucherHeadId,
-        ref,
-        amount,
-        date,
-        payVia,
-        description
-      } = await req.body;
+      const { sectionName, capacity } = await req.body
       transaction = await models.sequelize.transaction()
-      await deposit.update({ 
-        accountId,
-        voucherHeadId,
-        ref,
-        amount,
-        date,
-        payVia,
-        description
-      },
-      {
-        where: { id }
-      },
+      await section.create({ sectionName, capacity },
       {
         transaction
       }).catch(err => {
         message = "edit fail"
         status = 500
         success = false
-        console.log(chalk.red.bold("im from first inner catch",err.message))
+        console.log(err);
       })
       if(!success) {
         await transaction.rollback()
       }else {
         await transaction.commit()
-      }    
+      }
     }
   }catch (err) {
     success = false
@@ -245,5 +154,33 @@ router.patch("/edit/:id", validate, async function(req, res){
   })
 });
 
-module.exports = router;
 
+router.delete("/delete/:id", async function(req, res){
+
+  try {
+    var success = true
+    var message = "add success"
+    var status = 200
+    const id = req.params.id;
+    await section.destroy({
+      where: {
+        id
+      }
+    });
+    res.status(status).json({
+      success,
+      message
+    });
+  } catch(err) {
+    message = "delete fail"
+    success = false
+    status = 500
+    res.status(status).json({
+      success,
+      message
+    });
+    console.log(err);
+  };
+});
+
+module.exports = router;

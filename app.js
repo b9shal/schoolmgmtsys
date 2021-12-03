@@ -14,7 +14,15 @@ const accountRoute = require("./routes/account");
 const voucherHeadRoute = require("./routes/voucherHead");
 const expenseRoute = require("./routes/expense");
 const depositRoute = require("./routes/deposit");
+const guardianRoute = require("./routes/guardian");
+const studentCategoryRoute = require("./routes/studentCategory");
+const admissionRoute = require("./routes/admission");
+const classRoute = require("./routes/classRoom");
+const sectionRoute = require("./routes/section");
 const auth = require('./middleware/auth');
+
+
+
 let corsOptions = {
   origin: 'http://localhost:3000',
   optionsSuccessStatus: 200,
@@ -27,6 +35,8 @@ app.use(express.json({ extended: true }));
 
 dotenv.config();
 const PORT = process.env.PORT || 5004;
+
+app.use('/studentImages', express.static('./studentImages'))
 
 //routes
 app.use("/api/feeGroup", feeGroupRoute);
@@ -41,6 +51,11 @@ app.use("/api/account", accountRoute);
 app.use("/api/voucherHead", voucherHeadRoute);
 app.use("/api/expense", expenseRoute);
 app.use("/api/deposit", depositRoute);
+app.use("/api/guardian", guardianRoute);
+app.use("/api/studentCategory", studentCategoryRoute);
+app.use("/api/admission", admissionRoute);
+app.use("/api/class", classRoute);
+app.use("/api/section", sectionRoute);
 app.use(auth.isAuthenticate)
 
 
