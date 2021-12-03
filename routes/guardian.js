@@ -2,48 +2,49 @@ const express = require("express");
 const router = express.Router();
 const chalk = require('chalk');
 const { body, validationResult } = require("express-validator")
-const { deposit, voucherHead, account } = require("../models");
+const { guardian } = require("../models");
 const models = require("../models");
 
 const validate = [
-  body("ref")
+  body("name")
   .isString()
-  .withMessage("ref should be a string")
+  .withMessage("name should be a string")
+  .trim()
+  .isLength({ min: 1, max: 50 })
+  .withMessage("name should be atleast 1 char and atmost 20 chars long"),
+  body("relation")
+  .isString()
+  .withMessage("relation should be a string")
+  .trim()
+  .isLength({ min: 1, max: 50 })
+  .withMessage("relation should be atleast 1 char and atmost 20 chars long"),
+  body("mobile")
+  .isMobilePhone()
+  .withMessage("mobile number should be a valid mobile number"),
+  body("address")
+  .isString()
+  .withMessage("address should be a string")
   .trim()
   .isLength({ min: 1, max: 255 })
-  .withMessage("ref should be atleast 1 char and atmost 20 chars long"),
-  body("amount")
-  .isNumeric()
-  .withMessage("amount should be a number"),
-  body("date")
+  .withMessage("address should at least 1 and atmost 255 chars long"),
+  body("username")
   .isString()
-  .withMessage("date is a required field"),
-  body("payVia")
+  .isLength({ min: 1, max: 255 })
+  .withMessage("username should be an email or a string"),
+  body("password")
   .isString()
-  .withMessage("payment method is required")
-  .isIn(["Cash", "Card", "Cheque", "Bank Transfer"])
+  .isLength({ min: 1, max: 50 })
+  .withMessage("password is required field")
 ]
 
-//route to list vendors
+
 router.get("/list", async function(req, res){
 
   try {
     var success = true
     var message = "list success"
     var status = 200
-    const data = await deposit.findAll({
-      attributes: ["id", "ref", "amount", "description", "payVia", "date"],
-      include: [
-      { model: account, attributes: ["accountName"] },
-      { model: voucherHead, attributes: ["voucherName"] }
-    ]
-    })
-    .catch(err => {
-      success = false
-      message = "list fail"
-      status = 500
-      console.log(err.message)
-    })
+    const data = await guardian.findAll()
 
     res.status(status).json({
       success,
@@ -62,10 +63,11 @@ router.get("/list", async function(req, res){
     });
     console.log(err)
   };
+
 });
 
 
-//route to add a vendor
+
 router.post("/add", validate, async function(req, res) {
 
   try {
@@ -90,24 +92,50 @@ router.post("/add", validate, async function(req, res) {
       })
     }else {
 
-      const { 
-        accountId,
-        voucherHeadId,
-        ref,
-        amount,
-        date,
-        payVia,
-        description
+      const {
+        name,
+        relation,
+        fatherName,
+        motherName,
+        occupation,
+        income,
+        education,
+        city,
+        state,
+        mobile,
+        email,
+        address,
+        photo,
+        skipLoginAuth,
+        username,
+        password,
+        retypePassword,
+        facebook,
+        twitter,
+        linkedin,
       } = await req.body;
       transaction = await models.sequelize.transaction()
-      await deposit.create({ 
-        accountId,
-        voucherHeadId,
-        ref,
-        amount,
-        date,
-        payVia,
-        description
+      await guardian.create({
+        name,
+        relation,
+        fatherName,
+        motherName,
+        occupation,
+        income,
+        education,
+        city,
+        state,
+        mobile,
+        email,
+        address,
+        photo,
+        skipLoginAuth,
+        username,
+        password,
+        retypePassword,
+        facebook,
+        twitter,
+        linkedin,
       },
       {
         transaction
@@ -138,7 +166,6 @@ router.post("/add", validate, async function(req, res) {
 });
 
 
-//route to delete a vendor
 router.delete("/delete/:id", async function(req, res){
 
   try {
@@ -146,7 +173,7 @@ router.delete("/delete/:id", async function(req, res){
     var message = "delete success"
     var status = 200
     const id = req.params.id;
-    await deposit.destroy({ 
+    await guardian.destroy({ 
       where: {
         id
       }
@@ -171,7 +198,6 @@ router.delete("/delete/:id", async function(req, res){
 });
 
 
-//route to update a vendor
 router.patch("/edit/:id", validate, async function(req, res){
 
   try {
@@ -196,24 +222,50 @@ router.patch("/edit/:id", validate, async function(req, res){
       })
     }else {
       const id = req.params.id
-      const { 
-        accountId,
-        voucherHeadId,
-        ref,
-        amount,
-        date,
-        payVia,
-        description
+      const {
+        name,
+        relation,
+        fatherName,
+        motherName,
+        occupation,
+        income,
+        education,
+        city,
+        state,
+        mobile,
+        email,
+        address,
+        photo,
+        skipLoginAuth,
+        username,
+        password,
+        retypePassword,
+        facebook,
+        twitter,
+        linkedin,
       } = await req.body;
       transaction = await models.sequelize.transaction()
-      await deposit.update({ 
-        accountId,
-        voucherHeadId,
-        ref,
-        amount,
-        date,
-        payVia,
-        description
+      await guardian.update({
+        name,
+        relation,
+        fatherName,
+        motherName,
+        occupation,
+        income,
+        education,
+        city,
+        state,
+        mobile,
+        email,
+        address,
+        photo,
+        skipLoginAuth,
+        username,
+        password,
+        retypePassword,
+        facebook,
+        twitter,
+        linkedin,
       },
       {
         where: { id }

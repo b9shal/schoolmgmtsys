@@ -30,18 +30,12 @@ router.get("/list", async function(req, res){
     var success = true
     var message = "list success"
     var status = 200
-    const vendorList = await vendor.findAll()
-    .catch(err => {
-      success = false
-      message = "list fail"
-      status = 500
-      console.log(err.message)
-    })
+    const data = await vendor.findAll()
 
     res.status(status).json({
       success,
       message,
-      vendorList
+      data
     });
     
   } catch (err) {
