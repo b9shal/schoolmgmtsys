@@ -5,7 +5,7 @@ const chalk = require('chalk');
 const { body, validationResult } = require("express-validator")
 const { admission } = require("../models")
 const models = require("../models");
-const { path } = require("express/lib/application");
+var path = require("path");
 
 const validate = [
   body("firstName")
@@ -46,7 +46,7 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage: storage,
   limits:{fileSize: "1000000"},
-  fileFilter: function(req, file, cb){
+ /* fileFilter: function(req, file, cb){
   const fileTypes = /jpeg|jpg|png/
     const mimeType = fileTypes.test(file.mimetype)
     const extname = fileTypes.test(path.extname(file.originalname))
@@ -55,7 +55,7 @@ const upload = multer({
         return cb(null, true)
     }
     cb('warning!!! only images can be uploaded')
-  }
+  }*/
 }).single('photo');
 
 
