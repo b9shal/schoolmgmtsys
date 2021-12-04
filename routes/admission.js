@@ -89,11 +89,11 @@ router.get("/list", async function(req, res){
 });
 
 
-//route to add a vendor
-router.post("/add", validate, upload, async function(req, res) {
+router.post("/add",upload, async function(req, res) {
 
   try {
-    console.log("im in")
+    console.log(req.body)
+    console.log(req.file)
     var success = true
     var message = "add success"
     var status = 200

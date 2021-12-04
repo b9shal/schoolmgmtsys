@@ -4,7 +4,8 @@ const chalk = require('chalk');
 const bcrypt = require("bcrypt")
 const { body, validationResult } = require("express-validator")
 const { user } = require("../models");
-const models = require("../models");
+const jwt = require("jsonwebtoken")
+const auth = require("../middleware/auth")
 
 const validate = [
   body("username")
@@ -12,7 +13,6 @@ const validate = [
   .withMessage("username should be a valid email"),
   body("password")
   .isLength({ min: 8 })
-  .trim()
   .withMessage("password should be atleast 8 chars")
 ]
 
@@ -23,11 +23,11 @@ router.post("/register", validate, async function(req, res){
     var message = "user registration successful"
     var status = 200
     var validationError = null
-    var transaction = null
+    var token = ""
     const errors = validationResult(req)
 
     if(!errors.isEmpty()) {
-      message = "add fail"
+      message = "registration fail"
       status = 400
       success = false
       validationError = []
@@ -46,11 +46,12 @@ router.post("/register", validate, async function(req, res){
         role
       } = req.body
 
-      const isEmailExist = await user.findOne({ username })
+      console.log(req.body)
+      const isEmailExist = await user.findOne({ where: { username } })
 
       if(!isEmailExist) {
 
-        if(password === retypePassword) {
+        if(password === retypePassword ) {
 
           const salt = await bcrypt.genSalt(10)
           const encodedPass = await bcrypt.hash(password, salt)
@@ -59,9 +60,6 @@ router.post("/register", validate, async function(req, res){
             username,
             password: encodedPass,
             role
-          },
-          {
-            transaction
           }).catch(err => {
             success = false
             message = "user registration fail"
@@ -69,9 +67,7 @@ router.post("/register", validate, async function(req, res){
             console.log(err.message)
           })
           if(success) {
-            transaction.commit()
-          }else {
-            transaction.rollback()
+            token = jwt.sign({user}, process.env.API_SECRET)
           }
         }else {
           message = "passwords donot match"
@@ -92,12 +88,12 @@ router.post("/register", validate, async function(req, res){
   }
   res.status(status).json({
     success,
-    message
+    message,
+    token
   });
 });
 
 
-//route to add a vendor
 router.post("/login", validate, async function(req, res) {
 
   try {
@@ -106,7 +102,7 @@ router.post("/login", validate, async function(req, res) {
     var message = "login successful"
     var status = 200
     var validationError = null
-    var transaction = null
+    var token = ""
     const errors = validationResult(req)
 
     if(!errors.isEmpty()) {
@@ -128,40 +124,39 @@ router.post("/login", validate, async function(req, res) {
         role
       } = await req.body
 
-      transaction = await models.sequelize.transaction()
-      const isEmailExist = await vendor.findOne({
+      const User = await user.findOne({
         where: {
-          email: username
+          username
         }
-      },
-      {
-        transaction
       }).catch(err => {
         message = "login fail"
         status = 500
         success = false
         console.log(chalk.red.bold(err.message))
       })
-      if(isEmailExist){
-
-        
-        await transaction.commit()
+      if(User){
+        const ismatch = await bcrypt.compare(password, User.password)
+        if(ismatch) {
+          token = jwt.sign({User}, process.env.API_SECRET)
+        }
       }else {
-        await transaction.rollback()
+        message = "password didnot match"
+        status = 400
+        success = false
       }
     }
   }catch (err) {
     success = false
-    message = "add fail"
+    message = "login fail"
     status = 400
     console.log(err);
   };
   res.status(status).json({
     success,
     message,
-    validationError
+    validationError,
+    token
   })
 })
 
 module.exports = router;
-

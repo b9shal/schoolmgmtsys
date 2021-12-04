@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
 
-      classRoom.belongsTo(models.section, { foreignKey: "sectionId" })
+      classRoom.hasMany(models.classSection, { foreignKey: "classRoomId" })
     }
   };
   classRoom.init({

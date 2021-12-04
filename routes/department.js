@@ -1,19 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const { body, validationResult } = require("express-validator")
-const { section } = require("../models");
+const { department } = require("../models");
 const models  = require("../models");
 
 const validate = [
-  body("sectionName")
+  body("departmentName")
   .isString()
-  .withMessage("section name should be a string")
+  .withMessage("department name should be a string")
   .trim()
-  .isLength({ min: 1, max: 100 })
-  .withMessage("section name should be between 1 to 100 chars long"),
-  body("capacity")
-  .isNumeric()
-  .withMessage("section capacity should be a number")
+  .isLength({ min: 1, max: 255 })
+  .withMessage("section name should be between 1 to 255 chars long")
 ]
 
 
@@ -23,7 +20,7 @@ router.get("/list", async function(req, res){
     var success = true
     var message = "list success"
     var status = 200
-    const data = await section.findAll()
+    const data = await department.findAll()
 
     res.status(status).json({
       success,
@@ -69,9 +66,9 @@ router.post("/add", validate, async function(req, res) {
         })
       })
     }else {
-      const { sectionName, capacity } = await req.body
+      const { departmentName } = await req.body
       transaction = await models.sequelize.transaction()
-      await section.create({ sectionName, capacity },
+      await department.create({ departmentName },
       {
         transaction
       }).catch(err => {
@@ -124,9 +121,9 @@ router.patch("/edit/:id", validate, async function(req, res) {
       })
     }else {
       const id = req.params.id
-      const { sectionName, capacity } = await req.body
+      const { departmentName } = await req.body
       transaction = await models.sequelize.transaction()
-      await section.update({ sectionName, capacity },
+      await department.update({ departmentName },
       {
         where: { id }
       },
@@ -165,7 +162,7 @@ router.delete("/delete/:id", async function(req, res){
     var message = "add success"
     var status = 200
     const id = req.params.id;
-    await section.destroy({
+    await department.destroy({
       where: {
         id
       }

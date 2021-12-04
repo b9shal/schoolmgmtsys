@@ -1,19 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const { body, validationResult } = require("express-validator")
-const { section } = require("../models");
+const { designation } = require("../models");
 const models  = require("../models");
 
 const validate = [
-  body("sectionName")
+  body("designationName")
   .isString()
-  .withMessage("section name should be a string")
+  .withMessage("designation name should be a string")
   .trim()
-  .isLength({ min: 1, max: 100 })
-  .withMessage("section name should be between 1 to 100 chars long"),
-  body("capacity")
-  .isNumeric()
-  .withMessage("section capacity should be a number")
+  .isLength({ min: 1, max: 255 })
+  .withMessage("designation name should be between 1 to 255 chars long")
 ]
 
 
@@ -23,7 +20,7 @@ router.get("/list", async function(req, res){
     var success = true
     var message = "list success"
     var status = 200
-    const data = await section.findAll()
+    const data = await designation.findAll()
 
     res.status(status).json({
       success,
@@ -69,9 +66,9 @@ router.post("/add", validate, async function(req, res) {
         })
       })
     }else {
-      const { sectionName, capacity } = await req.body
+      const { designationName } = await req.body
       transaction = await models.sequelize.transaction()
-      await section.create({ sectionName, capacity },
+      await designation.create({ designationName },
       {
         transaction
       }).catch(err => {
@@ -124,9 +121,9 @@ router.patch("/edit/:id", validate, async function(req, res) {
       })
     }else {
       const id = req.params.id
-      const { sectionName, capacity } = await req.body
+      const { designationName } = await req.body
       transaction = await models.sequelize.transaction()
-      await section.update({ sectionName, capacity },
+      await designation.update({ designationName },
       {
         where: { id }
       },
@@ -165,7 +162,7 @@ router.delete("/delete/:id", async function(req, res){
     var message = "add success"
     var status = 200
     const id = req.params.id;
-    await section.destroy({
+    await designation.destroy({
       where: {
         id
       }

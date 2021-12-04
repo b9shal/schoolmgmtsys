@@ -19,6 +19,7 @@ const studentCategoryRoute = require("./routes/studentCategory");
 const admissionRoute = require("./routes/admission");
 const classRoute = require("./routes/classRoom");
 const sectionRoute = require("./routes/section");
+const userRoute = require("./routes/user");
 const auth = require('./middleware/auth');
 
 
@@ -56,6 +57,7 @@ app.use("/api/studentCategory", studentCategoryRoute);
 app.use("/api/admission", admissionRoute);
 app.use("/api/class", classRoute);
 app.use("/api/section", sectionRoute);
+app.use("/api/user", userRoute);
 app.use(auth.isAuthenticate)
 
 
