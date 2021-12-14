@@ -30,22 +30,17 @@ router.get('/list', async function (req, res) {
         var success = true
         var status = 200
         var message = 'list success'
-        const feeGroupList = await models.feeTypeFeeGroup.findAll({
-            attributes: ["id", "dueDate", "amount"],
+        const data = await models.feeTypeFeeGroup.findAll({
+            attributes: ["dueDate", "amount"],
             include: [
                 { model: feeType, attributes: ["name"] },
-                { model: feeGroup, attributes: ["groupName", "description"] }
+                { model: feeGroup, attributes: ["id", "groupName", "description"] }
             ]
-        }).catch(err => {
-            status = 500
-            success = false
-            message = "list fail"
-            console.log(err.message)
         })
         res.status(status).json({
             message,
             success,
-            feeGroupList
+            data
         })
     } catch (err) {
         success = false
@@ -112,7 +107,7 @@ router.post('/add', validate, async function (req, res) {
                         amount: val.amount,
                         createdAt: new Date,
                         updatedAt: new Date
-                    })
+                    }) 
                 })
                 
                 await models.sequelize.queryInterface
@@ -150,7 +145,7 @@ router.post('/add', validate, async function (req, res) {
 
 router.patch('/edit/:id', validate, async function (req, res) {
     try {
-        const id = req.params.id
+        var id = req.params.id
         var success = true
         var message = 'edit success'
         var status = 200
@@ -169,17 +164,12 @@ router.patch('/edit/:id', validate, async function (req, res) {
                 })
             });
         } else {
-            const {
-                groupName,
-                description,
-                feeTypes
-            } = await req.body
             transaction = await models.sequelize.transaction()
-            await feeGroup.update({ groupName, description },{
+            await feeGroup.update({ groupName: req.body.groupName, description: req.body.description },{
                 where: {
                     id
                 }
-            }).catch(err => {
+            },{ transaction }).catch(err => {
                 success = false
                 message = "edit fail"
                 status = 500
@@ -187,12 +177,50 @@ router.patch('/edit/:id', validate, async function (req, res) {
             })
         }
         if(!success) {
+            console.log("ddasdlfjlkajsdfkjakjkjkjasdfl")
             await transaction.rollback()
         }else {
-            await transaction.commit()
+            await models.feeTypeFeeGroup.destroy({
+                where: {
+                    feeGroupId: id
+                }
+            })
+
+            let feeTypeFeeGroupCollection = []
+            req.body.feeTypes.forEach(val => {
+                feeTypeFeeGroupCollection.push({
+                    feeGroupId: req.params.id,
+                    feeTypeId: val.feeTypeId,
+                    dueDate: val.dueDate,
+                    amount: val.amount,
+                    createdAt: new Date,
+                    updatedAt: new Date
+                }) 
+            })
+
+            await models.sequelize.queryInterface
+                .bulkInsert(models.feeTypeFeeGroup.getTableName(),
+                feeTypeFeeGroupCollection,
+                { 
+                    transaction 
+                }).catch(err => {
+                    success = false
+                    message = "add fail"
+                    status = 400
+                    console.log(chalk.red.bold(err.message))
+                })
+
+            if(success){
+                console.log("first commitccccccccccccccccccccccccc")
+                await transaction.commit() 
+            }else {
+                console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
+                await transaction.rollback()
+            }
         }
     } catch (err) {
         success = false
+        status = 500
         message = "edit fail"
         console.log(chalk.red.bold("feeGroup.js ", err.message))
     }
@@ -203,12 +231,31 @@ router.patch('/edit/:id', validate, async function (req, res) {
     })
 })
 
-router.get('/delete/:id', async function (req, res) {
+router.delete('/delete/:id', async function (req, res) {
     try {
         var message = 'delete success'
         var success = true
         var status = 200
-        const result = models.feeTypeFeeGroup
+        var transaction = await models.sequelize.transaction()
+        const id = req.params.id
+        await feeGroup.destroy({
+            where: {
+                id
+            }
+        }, { transaction})
+        .catch(err => {
+            success = false
+            status = 500
+            message = "delete fail"
+        })
+        if(success) {
+            await models.feeTypeFeeGroup.destroy({
+                where : {feeGroupId: id}
+            })
+            await transaction.commit()
+        }else {
+            await transaction.rollback()
+        }
     } catch (err) {
         success = false
         message = 'delete fail'

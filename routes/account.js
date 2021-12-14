@@ -11,7 +11,7 @@ const validate = [
   .withMessage("account name should be a string")
   .trim()
   .isLength({ min: 1, max: 255 })
-  .withMessage("vendor name should be between 1 to 255 chars"),
+  .withMessage("account name should be between 1 to 255 chars"),
   body("accountNumber")
   .isString()
   .withMessage("account number should be a valid account number")
@@ -83,7 +83,7 @@ router.post("/add", validate, async function(req, res) {
         accountNumber,
         description,
         openingBalance
-      } = await req.body;
+      } = await req.body
       transaction = await models.sequelize.transaction()
       await account.create({ 
         accountName,
@@ -128,9 +128,7 @@ router.delete("/delete/:id", async function(req, res){
     var status = 200
     const id = req.params.id;
     await account.destroy({ 
-      where: {
-        id
-      }
+      where: { id }
     }).catch(err => {
       success = false
       message = "delete fail"
@@ -182,7 +180,7 @@ router.patch("/edit/:id", validate, async function(req, res){
         accountNumber,
         description,
         openingBalance
-      } = await req.body;
+      } = await req.body
       transaction = await models.sequelize.transaction()
       await account.update({ 
         accountName,
@@ -228,7 +226,7 @@ router.delete("/delete/:id", async function(req, res){
     var success = true
     var message = "delete success"
     var status = 200
-    const id = req.params.id;
+    const id = req.params.id
     await account.destroy({ 
       where: { id }
     }).catch(err => {
@@ -242,14 +240,13 @@ router.delete("/delete/:id", async function(req, res){
     success = false
     message = "delete fail"
     status = 400
-    console.log(err);
-  };
+    console.log(err)
+  }
 
   res.status(status).json({
     success,
     message
   })
-});
+})
 
 module.exports = router;
-

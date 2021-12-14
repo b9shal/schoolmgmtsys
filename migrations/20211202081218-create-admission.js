@@ -17,7 +17,7 @@ module.exports = {
         allowNull: false
       },
       academicYear: {
-        type: Sequelize.DATE,
+        type: Sequelize.STRING,
         allowNull: false
       },
       registerNo: {
@@ -28,7 +28,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       admissionDate: {
-        type: Sequelize.DATE,
+        type: Sequelize.STRING,
         allowNull: false
       },
       firstName: {

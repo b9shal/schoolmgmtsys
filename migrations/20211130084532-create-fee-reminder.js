@@ -18,7 +18,10 @@ module.exports = {
       message: {
         type: Sequelize.STRING
       },
-      notify: {
+      student: {
+        type: Sequelize.STRING
+      },
+      guardian: {
         type: Sequelize.STRING
       },
       createdAt: {

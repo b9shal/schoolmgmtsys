@@ -28,6 +28,6 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'stock',
     tableName: 'stock'
-  });
-  return stock;
-};
+  })
+  return stock
+}

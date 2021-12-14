@@ -12,8 +12,16 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
 
-      admission.belongsTo(models.studentCategory, { foreignKey: "studentCategoryId" })
+      admission.belongsTo(models.classRoom, { foreignKey: "classRoomId" })
+      // admission.belongsTo(models.section, { foreignKey: "sectionId" })
+      admission.belongsTo(models.admissionCategory, { foreignKey: "admissionCategoryId" })
       admission.belongsTo(models.guardian, { foreignKey: "guardianId" })
+      admission.belongsTo(models.vehicleRoute, { foreignKey: "vehicleRouteId" })
+      admission.belongsTo(models.vehicle, { foreignKey: "vehicleId" })
+      admission.belongsTo(models.hostel, { foreignKey: "hostelId" })
+      admission.belongsTo(models.hostelRoom, { foreignKey: "hostelRoomId" })
+
+      admission.hasOne(models.student, { foreignKey: "admissionId" }) 
     }
   };
   admission.init({

@@ -1,10 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { expense, deposit } = require("../models");
-const expense = require("../models/expense");
+const { expense, deposit, account, voucherHead } = require("../models");
 
 
-router.post("/list", async function(req, res) {
+router.get("/list", async function(req, res) {
 
   try {
 
@@ -12,14 +11,14 @@ router.post("/list", async function(req, res) {
     var message = "add success"
     var status = 200
     
-    const deposits = await deposit.findAll({
+    var deposits = await deposit.findAll({
       attributes: ["id", "ref", "amount", "description", "payVia", "date"],
       include: [
-        { model: account, attributes: ["accountName"] },
-        { model: voucherHead, attributes: ["voucherName"] }
+      { model: account, attributes: ["accountName"] },
+      { model: voucherHead, attributes: ["voucherName"] }
       ]
     })
-    const expenses = await expense.findAll({
+    var expenses = await expense.findAll({
       attributes: ["id", "ref", "amount", "description", "payVia", "date"],
       include: [
         { model: account, attributes: ["accountName"] },
@@ -36,7 +35,8 @@ router.post("/list", async function(req, res) {
   res.status(status).json({
     success,
     message,
-    validationError
+    deposits,
+    expenses
   })
 })
 

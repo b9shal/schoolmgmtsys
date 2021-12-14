@@ -64,10 +64,10 @@ router.post("/add", validate, async function(req, res){
         })
       })
     }else {
-      const { frequency, days, message, notify } = await req.body
+      const { frequency, days, message, student, guardian } = await req.body
       transaction = await models.sequelize.transaction()
-      await feeReminder.create({ frequency, days, message, notify }, 
-      { 
+      await feeReminder.create({ frequency, days, message, student, guardian }, 
+      {
         transaction
       }).catch(err => {
         message = "add fail"

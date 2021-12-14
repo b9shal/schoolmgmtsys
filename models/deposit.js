@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
   deposit.init({
     ref: DataTypes.STRING,
     amount: DataTypes.DECIMAL,
-    date: DataTypes.DATE,
+    date: DataTypes.STRING,
     payVia: DataTypes.STRING,
     description: DataTypes.STRING,
     attachment: DataTypes.STRING

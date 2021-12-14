@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
 
       classRoom.hasMany(models.classSection, { foreignKey: "classRoomId" })
+      classRoom.hasOne(models.student, { foreignKey: "classRoomId" })
     }
   };
   classRoom.init({

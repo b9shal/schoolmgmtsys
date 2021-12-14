@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
 
       guardian.hasOne(models.admission, { foreignKey: "guardianId" })
+      guardian.hasOne(models.student, { foreignKey: "guardianId" })
     }
   };
   guardian.init({

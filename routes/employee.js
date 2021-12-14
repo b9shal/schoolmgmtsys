@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { body, validationResult } = require("express-validator")
-const { department, designation, employee, employeeDepartmentDesignation } = require("../models");
+const { department, designation, employee, employeeDepartmentDesignation, role } = require("../models");
 const models  = require("../models");
 
 const validate = [
@@ -17,12 +17,6 @@ const validate = [
   body("phone")
   .isMobilePhone()
   .withMessage("employee phone no. should be a valid phone no."),
-  body("role")
-  .isString()
-  .withMessage("employee role should be a string")
-  .trim()
-  .isLength({ min: 1, max: 255 })
-  .withMessage("employee role should be between 1 to 255 chars long"),
   body("joiningDate")
   .isDate()
   .withMessage("employee joining date should be a date"),
@@ -43,7 +37,7 @@ const validate = [
   .withMessage("employee username should be a valid email"),
   body("password")
   .isEmpty()
-  .withMessage("employee password address should not be empty"),
+  .withMessage("employee password cannot be empty"),
   body("bankName")
   .isString()
   .withMessage("employee bank name should be a string")
@@ -80,7 +74,7 @@ router.get("/list", async function(req, res){
           model: employee
         },
         {
-          model: department, attributes: ["departmentId", "depatymentName"]
+          model: department, attributes: ["departmentId", "departymentName"]
         },
         {
           model: designation, attributes: ["designationId", "designationName"]
@@ -209,8 +203,9 @@ router.post("/add", validate, async function(req, res) {
           success = false
           console.log(err)
         })
-
-        await transaction.commit()
+        if(success){
+          await transaction.commit()
+        }
       }else {
         await transaction.rollback()
       }

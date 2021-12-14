@@ -18,8 +18,8 @@ module.exports = {
                 var token = authKey[1]
                 await jwt.verify(token, process.env.API_SECRET, function(err, decoded) {
                     if(err){
-                        console.log(chalk.red.bold("auth.js 12 ",err.message))
-                        res.status(401).send({
+                        console.log(chalk.red.bold("auth.js 12 ", err.message))
+                        res.status(401).json({
                             success : false,
                             msg:'Auth failed'
                         })
@@ -32,10 +32,9 @@ module.exports = {
                 });
 
             }else{
-                res.status(401).send({
+                res.status(401).json({
                     success : false,
                     msg : 'Auth failed'
-
                 })
             }
             /*  await jwt.verify(req.header, process.env.INVENTORY_SECRET, function(err, decoded) {

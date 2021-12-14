@@ -4,6 +4,9 @@ const chalk = require('chalk');
 const { body, validationResult } = require("express-validator")
 const { expense, voucherHead, account } = require("../models");
 const models = require("../models");
+const path = require('path');
+const multer = require("multer");
+const fs = require("fs")
 
 const validate = [
   body("ref")
@@ -13,17 +16,51 @@ const validate = [
   .isLength({ min: 1, max: 255 })
   .withMessage("ref should be atleast 1 char and atmost 20 chars long"),
   body("amount")
-  .isNumeric()
+  .isString()
   .withMessage("amount should be a number"),
   body("date")
-  .isDate()
+  .isString()
   .withMessage("date is a required field")
   .withMessage("address1 should at least 1 and atmost 255 chars long"),
   body("payVia")
   .isString()
   .withMessage("payment method is required")
-  .isIn(["Cash", "Card", "Cheque", "Bank Transfer"])
 ]
+
+const storage = multer.diskStorage({
+  destination: './public/uploads/expenseImages',
+  filename: function (req, file, cb) {
+    const datetimestamp = Date.now()
+    console.log("inside storge")
+    cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1])
+  }
+});
+
+
+const upload = multer({
+  storage: storage,
+  limits:{fileSize: 1000000},
+  fileFilter: function(req, file, cb){
+    checkFileType(file, cb)
+  }
+}).single('attachment')
+
+
+// Check File Type
+function checkFileType(file, cb){
+  // Allowed ext
+  const filetypes = /jpeg|jpg|png/
+  // Check ext
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase())
+  // Check mime
+  const mimetype = filetypes.test(file.mimetype)
+
+  if(mimetype && extname){
+    return cb(null,true)
+  } else {
+    cb('Error: Images Only!')
+  }
+}
 
 //route to list expense
 router.get("/list", async function(req, res){
@@ -33,7 +70,6 @@ router.get("/list", async function(req, res){
     var message = "list success"
     var status = 200
     const data = await expense.findAll({
-      attributes: ["id", "ref", "amount", "description", "payVia", "date"],
       include: [
       { model: account, attributes: ["accountName"] },
       { model: voucherHead, attributes: ["voucherName"] }
@@ -68,7 +104,7 @@ router.get("/list", async function(req, res){
 
 
 //route to add a expense
-router.post("/add", validate, async function(req, res) {
+router.post("/add", upload, validate, async function(req, res) {
 
   try {
 
@@ -101,15 +137,17 @@ router.post("/add", validate, async function(req, res) {
         payVia,
         description
       } = await req.body;
+
       transaction = await models.sequelize.transaction()
       await expense.create({ 
-        accountId,
-        voucherHeadId,
+        accountId: parseInt(accountId),
+        voucherHeadId: parseInt(voucherHeadId),
         ref,
         amount,
         date,
         payVia,
-        description
+        description,
+        attachment: req.file.path
       },
       {
         transaction
@@ -123,7 +161,6 @@ router.post("/add", validate, async function(req, res) {
         await transaction.rollback()
       }else {
         await transaction.commit()
-
       }
     }
   }catch (err) {
@@ -148,23 +185,41 @@ router.delete("/delete/:id", async function(req, res){
     var message = "delete success"
     var status = 200
     const id = req.params.id;
-    await expense.destroy({ 
-      where: {
-        id
-      }
-    }).catch(err => {
-      success = false
-      message = "delete fail"
-      status = 500 
+    const data = await expense.findByPk(id).catch(err => {
       console.log(err.message)
     })
-
+    if(data){
+      await expense.destroy({ 
+        where: {
+          id
+        }
+      }).catch(err => {
+        success = false
+        message = "delete fail"
+        status = 500 
+        console.log(err.message)
+      })
+      if(success){
+        let resultHandler = function (err) {
+          if (err) {
+            console.log("file delete failed", err);
+          }else {
+            console.log("file deleted");
+          }
+        }
+      fs.unlink(data.attachment, resultHandler);
+      }
+    }else{
+      success = false
+      message = "delete fail"
+      status = 400
+    }
   } catch (err) {
     success = false
     message = "delete fail"
     status = 400
-    console.log(err);
-  };
+    console.log(err.message)
+  }
 
   res.status(status).json({
     success,
@@ -173,11 +228,11 @@ router.delete("/delete/:id", async function(req, res){
 });
 
 
+
 //route to update a expense
-router.patch("/edit/:id", validate, async function(req, res){
+router.patch("/edit/:id", upload, validate, async function(req, res){
 
   try {
-
     var success = true
     var message = "edit success"
     var status = 200
@@ -209,13 +264,14 @@ router.patch("/edit/:id", validate, async function(req, res){
       } = await req.body;
       transaction = await models.sequelize.transaction()
       await expense.update({ 
-        accountId,
-        voucherHeadId,
+        accountId: parseInt(accountId),
+        voucherHeadId: parseInt(voucherHeadId),
         ref,
         amount,
         date,
         payVia,
-        description
+        description,
+        attachment: req.file.path
       },
       {
         where: { id }

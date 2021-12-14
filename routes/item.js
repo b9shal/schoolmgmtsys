@@ -20,14 +20,14 @@ router.get("/list", async function(req, res){
     var success = true
     var message = "list success"
     var status = 200
-    const itemList = await itemCategory.findAll({
+    const data = await itemCategory.findAll({
       include: [{ model: item, attributes: ["id", "itemName"] }]
     })
 
     res.status(status).json({
       success,
       message,
-      itemList
+      data
     });
     
   } catch (err) {

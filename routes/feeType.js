@@ -11,8 +11,8 @@ const validate = [
   .withMessage("fee type should be a string")
   .trim()
   .escape()
-  .isLength({ min: 1, max: 20 })
-  .withMessage("name should be atleast 1 char and atmost 20 chars long"),
+  .isLength({ min: 1, max: 100 })
+  .withMessage("name should be atleast 1 char and atmost 100 chars long"),
   body("description")
   .isString()
   .withMessage("description should be a string")

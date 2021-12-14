@@ -5,7 +5,6 @@ const bcrypt = require("bcrypt")
 const { body, validationResult } = require("express-validator")
 const { user } = require("../models");
 const jwt = require("jsonwebtoken")
-const auth = require("../middleware/auth")
 
 const validate = [
   body("username")
@@ -27,7 +26,7 @@ router.post("/register", validate, async function(req, res){
     const errors = validationResult(req)
 
     if(!errors.isEmpty()) {
-      message = "registration fail"
+      message = "registration failed"
       status = 400
       success = false
       validationError = []
@@ -43,7 +42,8 @@ router.post("/register", validate, async function(req, res){
         username,
         password,
         retypePassword,
-        role
+        roleId,
+        name
       } = req.body
 
       console.log(req.body)
@@ -59,10 +59,11 @@ router.post("/register", validate, async function(req, res){
           await user.create({
             username,
             password: encodedPass,
-            role
+            roleId,
+            name
           }).catch(err => {
             success = false
-            message = "user registration fail"
+            message = "user registration failed"
             status = 500
             console.log(err.message)
           })
@@ -82,7 +83,7 @@ router.post("/register", validate, async function(req, res){
     }
   } catch (err) {
     success = false
-    message = "user registration fail"
+    message = "user registration failed"
     status = 500
     console.log(err)
   }
@@ -106,7 +107,7 @@ router.post("/login", validate, async function(req, res) {
     const errors = validationResult(req)
 
     if(!errors.isEmpty()) {
-      message = "login fail"
+      message = "login failed"
       status = 400
       success = false
       validationError = []
@@ -120,8 +121,7 @@ router.post("/login", validate, async function(req, res) {
 
       const {
         username,
-        password,
-        role
+        password
       } = await req.body
 
       const User = await user.findOne({
@@ -129,28 +129,33 @@ router.post("/login", validate, async function(req, res) {
           username
         }
       }).catch(err => {
-        message = "login fail"
+        message = "login failed"
         status = 500
         success = false
         console.log(chalk.red.bold(err.message))
+        console.log(chalk.red.bold(err.stack))
       })
       if(User){
         const ismatch = await bcrypt.compare(password, User.password)
         if(ismatch) {
-          token = jwt.sign({User}, process.env.API_SECRET)
+          token = await jwt.sign({User}, process.env.API_SECRET)
+        }else {
+          success = false
+          status = 401
+          message = "password didnot match"
         }
       }else {
-        message = "password didnot match"
-        status = 400
+        message = "user doesnot exist"
+        status = 401
         success = false
       }
     }
   }catch (err) {
     success = false
-    message = "login fail"
+    message = "login failed"
     status = 400
-    console.log(err);
-  };
+    console.log(err)
+  }
   res.status(status).json({
     success,
     message,
@@ -159,4 +164,4 @@ router.post("/login", validate, async function(req, res) {
   })
 })
 
-module.exports = router;
+module.exports = router

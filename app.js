@@ -14,15 +14,29 @@ const accountRoute = require("./routes/account");
 const voucherHeadRoute = require("./routes/voucherHead");
 const expenseRoute = require("./routes/expense");
 const depositRoute = require("./routes/deposit");
+const transactionRoute = require("./routes/transaction");
 const guardianRoute = require("./routes/guardian");
 const studentCategoryRoute = require("./routes/studentCategory");
 const admissionRoute = require("./routes/admission");
 const classRoute = require("./routes/classRoom");
 const sectionRoute = require("./routes/section");
 const userRoute = require("./routes/user");
-const auth = require('./middleware/auth');
-
-
+const hostelRoute = require("./routes/hostel");
+const hostelCategoryRoute = require("./routes/hostelCategory");
+const hostelRoomRoute = require("./routes/hostelRoom");
+const vehicleRoute = require("./routes/vehicle");
+const vehicleRouteRoute = require("./routes/vehicleRoute");
+const stoppageRoute = require("./routes/stoppage");
+const vehicleAssignRoute = require("./routes/vehicleAssign");
+const studentRoute = require("./routes/student");
+const bookRoute = require("./routes/book");
+const bookCategoryRoute = require("./routes/bookCategory");
+const bookRequestRoute = require("./routes/bookRequest");
+const bookIssueRoute = require("./routes/bookIssue");
+const roleRoute = require("./routes/role");
+const departmentRoute = require("./routes/department");
+const designationRoute = require("./routes/designation");
+const auth = require('./middleware/auth')
 
 let corsOptions = {
   origin: 'http://localhost:3000',
@@ -30,20 +44,22 @@ let corsOptions = {
   credentials: true
 };
 
-const app = express();
-app.use(cors(corsOptions));
-app.use(express.json({ extended: true }));
+const app = express()
+app.use(cors(corsOptions))
+app.use(express.json({ extended: true }))
 
 dotenv.config();
 const PORT = process.env.PORT || 5004;
 
-app.use('/studentImages', express.static('./studentImages'))
+app.use(express.static(`${__dirname}/public`))
+
 
 //routes
+app.use("/api/user", userRoute);
 app.use("/api/feeGroup", feeGroupRoute);
 app.use("/api/feeType", feeTypeRoute);
-app.use("/api/vendor", vendorRoute);
 app.use("/api/item", itemRoute);
+app.use("/api/vendor", vendorRoute);
 app.use("/api/itemCategory", itemCategoryRoute);
 app.use("/api/fine", fineRoute);
 app.use("/api/feeReminder", feeReminderRoute);
@@ -57,7 +73,22 @@ app.use("/api/studentCategory", studentCategoryRoute);
 app.use("/api/admission", admissionRoute);
 app.use("/api/class", classRoute);
 app.use("/api/section", sectionRoute);
-app.use("/api/user", userRoute);
+app.use("/api/hostel", hostelRoute);
+app.use("/api/hostelCategory", hostelCategoryRoute);
+app.use("/api/hostelRoom", hostelRoomRoute);
+app.use("/api/vehicleRoute", vehicleRouteRoute);
+app.use("/api/vehicle", vehicleRoute);
+app.use("/api/stoppage", stoppageRoute);
+app.use("/api/vehicleAssign", vehicleAssignRoute);
+app.use("/api/student", studentRoute);
+app.use("/api/book", bookRoute);
+app.use("/api/bookCategory", bookCategoryRoute);
+app.use("/api/bookRequest", bookRequestRoute);
+app.use("/api/bookIssue", bookIssueRoute);
+app.use("/api/transaction", transactionRoute);
+app.use("/api/department", departmentRoute);
+app.use("/api/designation", designationRoute);
+app.use("/api/role", roleRoute);
 app.use(auth.isAuthenticate)
 
 

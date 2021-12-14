@@ -4,6 +4,9 @@ const chalk = require('chalk');
 const { body, validationResult } = require("express-validator")
 const { guardian } = require("../models");
 const models = require("../models");
+const fs = require("fs")
+const multer = require('multer')
+const path = require("path")
 
 const validate = [
   body("name")
@@ -37,6 +40,41 @@ const validate = [
   .withMessage("password is required field")
 ]
 
+const storage = multer.diskStorage({
+  destination: './public/uploads/guardianImages',
+  filename: function (req, file, cb) {
+    const datetimestamp = Date.now()
+    console.log("inside storge")
+    cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1])
+  }
+});
+
+
+const upload = multer({
+  storage: storage,
+  limits:{fileSize: 1000000},
+  fileFilter: function(req, file, cb){
+    checkFileType(file, cb)
+  }
+}).single('attachment')
+
+
+// Check File Type
+function checkFileType(file, cb){
+  // Allowed ext
+  const filetypes = /jpeg|jpg|png/
+  // Check ext
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase())
+  // Check mime
+  const mimetype = filetypes.test(file.mimetype)
+
+  if(mimetype && extname){
+    return cb(null,true)
+  } else {
+    cb('Error: Images Only!')
+  }
+}
+
 
 router.get("/list", async function(req, res){
 
@@ -68,7 +106,7 @@ router.get("/list", async function(req, res){
 
 
 
-router.post("/add", validate, async function(req, res) {
+router.post("/add", upload, validate, async function(req, res) {
 
   try {
 
@@ -136,6 +174,7 @@ router.post("/add", validate, async function(req, res) {
         facebook,
         twitter,
         linkedin,
+        photo: req.file.path
       },
       {
         transaction
@@ -173,23 +212,41 @@ router.delete("/delete/:id", async function(req, res){
     var message = "delete success"
     var status = 200
     const id = req.params.id;
-    await guardian.destroy({ 
-      where: {
-        id
-      }
-    }).catch(err => {
-      success = false
-      message = "delete fail"
-      status = 500 
+    const data = await guardian.findByPk(id).catch(err => {
       console.log(err.message)
     })
-
+    if(data){
+      await guardian.destroy({ 
+        where: {
+          id
+        }
+      }).catch(err => {
+        success = false
+        message = "delete fail"
+        status = 500 
+        console.log(err.message)
+      })
+      if(success){
+        let resultHandler = function (err) {
+          if (err) {
+            console.log("file delete failed", err);
+          }else {
+            console.log("file deleted");
+          }
+        }
+      fs.unlink(data.photo, resultHandler);
+      }
+    }else{
+      success = false
+      message = "delete fail"
+      status = 400
+    }
   } catch (err) {
     success = false
     message = "delete fail"
     status = 400
-    console.log(err);
-  };
+    console.log(err.message)
+  }
 
   res.status(status).json({
     success,
@@ -198,7 +255,7 @@ router.delete("/delete/:id", async function(req, res){
 });
 
 
-router.patch("/edit/:id", validate, async function(req, res){
+router.patch("/edit/:id", upload, validate, async function(req, res){
 
   try {
 
@@ -266,6 +323,7 @@ router.patch("/edit/:id", validate, async function(req, res){
         facebook,
         twitter,
         linkedin,
+        photo: req.file.path
       },
       {
         where: { id }

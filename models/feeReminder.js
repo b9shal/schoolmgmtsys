@@ -24,7 +24,10 @@ module.exports = (sequelize, DataTypes) => {
     message: {
       type: DataTypes.STRING
     },
-    notify: {
+    student: {
+      type: DataTypes.STRING
+    },
+    guardian: {
       type: DataTypes.STRING
     }
   }, {
