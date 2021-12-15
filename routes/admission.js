@@ -66,7 +66,7 @@ function checkFileType(file, cb){
   if(mimetype && extname){
     return cb(null,true);
   } else {
-    cb(console.log("only images are allowed"));
+    cb(console.log("only images are allowed"))
   }
 }
 
@@ -95,9 +95,8 @@ router.get("/list", async function(req, res){
       message
     });
     console.log(err)
-  };
-
-});
+  }
+})
 
 
 router.post("/add", upload, validate, async function(req, res) {
