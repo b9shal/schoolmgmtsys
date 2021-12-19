@@ -131,7 +131,13 @@ router.patch("/edit/:id", validate, async function(req, res) {
       const id = req.params.id
       const { subjectName, subjectCode, subjectAuthor, subjectType } = await req.body
       transaction = await models.sequelize.transaction()
-      await subject.create({ subjectName, subjectCode, subjectAuthor, subjectType },
+      await subject.update({ 
+        subjectName, 
+        subjectCode, 
+        subjectAuthor, 
+        subjectType 
+      },
+      { where: { id }},
       {
         transaction
       }).catch(err => {
@@ -164,7 +170,7 @@ router.delete("/delete/:id", async function(req, res){
 
   try {
     var success = true
-    var message = "add success"
+    var message = "delete success"
     var status = 200
     const id = req.params.id;
     await subject.destroy({
@@ -179,12 +185,12 @@ router.delete("/delete/:id", async function(req, res){
   } catch(err) {
     message = "delete fail"
     success = false
+    console.log(err);
     status = 500
     res.status(status).json({
       success,
       message
     });
-    console.log(err);
   };
 });
 

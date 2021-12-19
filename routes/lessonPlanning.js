@@ -1,8 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const { body, validationResult } = require("express-validator")
-const { vehicleAssign, vehicleRoute, vehicle, stoppAge } = require("../models");
+const { classRoom, section, subject, employee, lessonPlanning, role } = require("../models");
 const models  = require("../models");
+const moment = require("moment")
+
+const validate = [
+  body("topic")
+  .isString()
+  .withMessage("topic should be a string")
+  .trim()
+  .isLength({ min: 1, max: 100 })
+  .withMessage("topic should be between 1 to 100 chars long")
+]
 
 
 router.get("/list", async function(req, res){
@@ -11,12 +21,21 @@ router.get("/list", async function(req, res){
     var success = true
     var message = "list success"
     var status = 200
-    const data = await vehicleAssign.findAll({
-      include:[
-        { model: vehicleRoute, attributes: ["routeName", "startPlace", "stopPlace"] },
-        { model: vehicle, attributes: ["vehicleNo"]},
-        { model: stoppAge, attributes: ["stoppage", "routeFare"] }
-      ]
+    const data = await lessonPlanning.findAll({
+      attributes: ["id", "topic", "startDate", "endDate"],
+      include: [{
+        model: employee, attributes: ["name"],
+        include: [{ model: role, where: { type: "Teacher"}, attributes: [] }]
+      },
+      {
+        model: classRoom, attributes: ["className"]
+      },
+      {
+        model: section, attributes: ["sectionName"]
+      },
+      {
+        model: subject, attributes: ["subjectName"]
+      }]
     })
 
     res.status(status).json({
@@ -35,11 +54,12 @@ router.get("/list", async function(req, res){
       success,
       message
     })
+    console.log(err)
   };
 })
 
 
-router.post("/add", async function(req, res) {
+router.post("/add", validate, async function(req, res) {
 
   try {
 
@@ -62,30 +82,35 @@ router.post("/add", async function(req, res) {
         })
       })
     }else {
-      const { vehicleRouteId, vehicleId, stoppAgeId } = await req.body
-
-      const assignVehicle = []
-      vehicleId.forEach(val => {
-        assignVehicle.push({
-          vehicleRouteId,
-          stoppAgeId,
-          vehicleId: val,
-          createdAt: new Date,
-          updatedAt: new Date
-        })
-      });
+      const { 
+        classId, 
+        sectionId, 
+        subjectId, 
+        teacherId, 
+        topic, 
+        startDate, 
+        endDate 
+      } = await req.body      
+      
       transaction = await models.sequelize.transaction()
 
-      await models.sequelize.queryInterface
-        .bulkInsert(models.vehicleAssign.getTableName(),
-        assignVehicle,
+
+      await lessonPlanning.create({ 
+        classRoomId: classId, 
+        sectionId, 
+        subjectId, 
+        employeeId: teacherId, 
+        topic, 
+        startDate: moment(startDate).format('YYYY-MM-DD'), 
+        endDate: moment(endDate).format('YYYY-MM-DD')
+      },
       {
         transaction
       }).catch(err => {
         message = "add fail"
         status = 500
         success = false
-        console.log(err)
+        console.log(err);
       })
       if(success) {
         await transaction.commit()
@@ -107,7 +132,7 @@ router.post("/add", async function(req, res) {
 });
 
 
-router.patch("/edit/:id", async function(req, res) {
+router.patch("/edit/:id", validate, async function(req, res) {
 
   try {
 
@@ -131,9 +156,25 @@ router.patch("/edit/:id", async function(req, res) {
       })
     }else {
       const id = req.params.id
-      const { vehicleRouteId, vehicleId, stoppAgeId } = await req.body
+      const { 
+        classId, 
+        sectionId, 
+        subjectId, 
+        teacherId, 
+        topic, 
+        startDate, 
+        endDate 
+      } = await req.body
       transaction = await models.sequelize.transaction()
-      await vehicleAssign.update({ vehicleRouteId, vehicleId, stoppAgeId },
+      await lessonPlanning.update({ 
+        classRoomId: classId, 
+        sectionId, 
+        subjectId, 
+        employeeId: teacherId, 
+        topic, 
+        startDate, 
+        endDate 
+      },
       {
         where: { id }
       },
@@ -169,11 +210,13 @@ router.delete("/delete/:id", async function(req, res){
 
   try {
     var success = true
-    var message = "add success"
+    var message = "delete success"
     var status = 200
     const id = req.params.id;
-    await vehicleAssign.destroy({
-      where: { id }
+    await lessonPlanning.destroy({
+      where: {
+        id
+      }
     });
     res.status(status).json({
       success,
@@ -191,4 +234,4 @@ router.delete("/delete/:id", async function(req, res){
   };
 });
 
-module.exports = router;
+module.exports = router

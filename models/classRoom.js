@@ -13,7 +13,10 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
 
       classRoom.hasMany(models.classSection, { foreignKey: "classRoomId" })
+      classRoom.hasMany(models.classAssign, { foreignKey: "classRoomId" })
       classRoom.hasOne(models.student, { foreignKey: "classRoomId" })
+      classRoom.hasOne(models.assignClassTeacher, { foreignKey: "classRoomId" })
+      classRoom.hasMany(models.lessonPlanning, { foreignKey: "classRoomId" })
     }
   };
   classRoom.init({
@@ -22,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'classRoom',
-    tableName: 'classRoom',
-  });
+    tableName: 'classRoom'
+  })
   return classRoom;
 };

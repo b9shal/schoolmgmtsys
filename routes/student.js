@@ -14,6 +14,7 @@ router.get("/list", async function(req, res){
         { model: admission, attributes: ["firstName", "middleName", "lastName", "registerNo", "roll", "dob"] },
         { model: guardian, attributes: ["name"] },
         { model: section, attributes: ["sectionName"] },
+        { model: classRoom, attributes: ["className"] },
       ]
     })
 

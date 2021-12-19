@@ -12,17 +12,17 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
 
-      classSection.belongsTo(models.classRoom, {foreignKey: "classRoomId" })
-      classSection.belongsTo(models.section, {foreignKey: "sectionId" })
+      classSection.belongsTo(models.classRoom, { foreignKey: "classRoomId" })
+      classSection.belongsTo(models.section, { foreignKey: "sectionId" })
     }
   };
   classSection.init({
-    classRoomId: DataTypes.INTEGER,
-    sectionId: DataTypes.INTEGER
+    sectionId: DataTypes.INTEGER,
+    classRoomId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'classSection',
-    tableName: 'classSection',
+    tableName: 'classSection'
   });
   return classSection;
 };

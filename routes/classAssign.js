@@ -1,9 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const { body, validationResult } = require("express-validator")
-const { vehicleAssign, vehicleRoute, vehicle, stoppAge } = require("../models");
+const { classRoom, section, classAssign, subject } = require("../models");
 const models  = require("../models");
 
+const validate = [
+  body("className")
+  .isString()
+  .withMessage("class name should be a string")
+  .trim()
+  .isLength({ min: 1, max: 100 })
+  .withMessage("class name should be between 1 to 100 chars long"),
+  body("classNo")
+  .isNumeric()
+  .withMessage("class no should be a number")
+]
 
 router.get("/list", async function(req, res){
 
@@ -11,19 +22,21 @@ router.get("/list", async function(req, res){
     var success = true
     var message = "list success"
     var status = 200
-    const data = await vehicleAssign.findAll({
-      include:[
-        { model: vehicleRoute, attributes: ["routeName", "startPlace", "stopPlace"] },
-        { model: vehicle, attributes: ["vehicleNo"]},
-        { model: stoppAge, attributes: ["stoppage", "routeFare"] }
-      ]
+    const data = await classAssign.findAll({
+      attributes:['id'],
+      // group: ["classRoom.className"],
+      include: [
+        { model: classRoom, attributes: ["id","className"] },
+        { model: section, attributes: ["id","sectionName"] },
+        { model: subject, attributes: ["id","subjectName"] }
+      ],
     })
 
     res.status(status).json({
       success,
       message,
       data
-    })
+    });
     
   } catch (err) {
     success = false
@@ -36,7 +49,7 @@ router.get("/list", async function(req, res){
       message
     })
   };
-})
+});
 
 
 router.post("/add", async function(req, res) {
@@ -62,32 +75,34 @@ router.post("/add", async function(req, res) {
         })
       })
     }else {
-      const { vehicleRouteId, vehicleId, stoppAgeId } = await req.body
+      
+      const { classId, sectionId, subjects } = await req.body
 
-      const assignVehicle = []
-      vehicleId.forEach(val => {
-        assignVehicle.push({
-          vehicleRouteId,
-          stoppAgeId,
-          vehicleId: val,
+      let subjectsCollection = []
+      subjects.forEach(val => {
+        subjectsCollection.push({
+          classRoomId: classId,
+          sectionId,
+          subjectId: val,
           createdAt: new Date,
           updatedAt: new Date
-        })
-      });
+        }) 
+      })
+
       transaction = await models.sequelize.transaction()
 
       await models.sequelize.queryInterface
-        .bulkInsert(models.vehicleAssign.getTableName(),
-        assignVehicle,
+        .bulkInsert(models.classAssign.getTableName(),
+        subjectsCollection,
       {
         transaction
       }).catch(err => {
         message = "add fail"
         status = 500
         success = false
-        console.log(err)
+        console.log(err.message);
       })
-      if(success) {
+      if(success){
         await transaction.commit()
       }else {
         await transaction.rollback()
@@ -97,14 +112,15 @@ router.post("/add", async function(req, res) {
     success = false
     message = "add fail"
     status = 400
-    console.log(err);
-  };
+    console.log(err.message);
+  }
+
   res.status(status).json({
     success,
     message,
     validationError
   })
-});
+})
 
 
 router.patch("/edit/:id", async function(req, res) {
@@ -130,25 +146,47 @@ router.patch("/edit/:id", async function(req, res) {
         })
       })
     }else {
+
       const id = req.params.id
-      const { vehicleRouteId, vehicleId, stoppAgeId } = await req.body
+      const { classId, sectionId, subjects } = await req.body
+
+      let subjectsCollection = []
+      subjects.forEach(val => {
+        subjectsCollection.push({
+          classRoomId: classId,
+          sectionId,
+          subjectId: val,
+          createdAt: new Date,
+          updatedAt: new Date
+        }) 
+      })
+      
+      await models.classAssign.destroy({
+        where: {
+          id
+        }
+      }).catch(err => {
+        console.log(err.message)
+      })
+
       transaction = await models.sequelize.transaction()
-      await vehicleAssign.update({ vehicleRouteId, vehicleId, stoppAgeId },
-      {
-        where: { id }
-      },
+
+      await models.sequelize.queryInterface
+      .bulkInsert(models.classAssign.getTableName(),
+      subjectsCollection,
       {
         transaction
       }).catch(err => {
         message = "edit fail"
         status = 500
         success = false
-        console.log(err);
+        console.log(err)
       })
-      if(!success) {
-        await transaction.rollback()
-      }else {
+
+      if(success) {
         await transaction.commit()
+      }else {
+        await transaction.rollback()
       }
     }
   }catch (err) {
@@ -162,23 +200,41 @@ router.patch("/edit/:id", async function(req, res) {
     message,
     validationError
   })
-});
+})
 
 
 router.delete("/delete/:id", async function(req, res){
 
   try {
     var success = true
-    var message = "add success"
+    var message = "delete success"
     var status = 200
     const id = req.params.id;
-    await vehicleAssign.destroy({
+    const transaction = await models.sequelize.transaction()
+
+    await classAssign.destroy({
       where: { id }
-    });
+    },
+    {
+      transaction
+    }).catch(err => {
+      message = "delete fail"
+      success = false
+      status = 500
+      console.log(err.message)
+    })
+    
+    if(success){
+      transaction.commit()
+    }else {
+      transaction.rollback()
+    }
+
     res.status(status).json({
       success,
       message
-    });
+    })
+
   } catch(err) {
     message = "delete fail"
     success = false

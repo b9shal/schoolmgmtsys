@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
 
       role.hasOne(models.bookIssue, { foreignKey: "roleId" })
       role.hasOne(models.user, { foreignKey: "roleId" })
+      role.hasOne(models.employee, { foreignKey: "roleId" })
     }
   };
   role.init({

@@ -12,11 +12,17 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
 
-      employee.hasMany(models.employeeDepartmentDesignation, { foreignKey: "employeeId"} )
+      employee.belongsTo(models.department, { foreignKey: "departmentId"} )
+      employee.belongsTo(models.designation, { foreignKey: "designationId"} )
+      employee.belongsTo(models.role, { foreignKey: "roleId"})
+      employee.hasMany(models.employee, { foreignKey: "employeeId"})
+      employee.hasMany(models.lessonPlanning, { foreignKey: "employeeId"})
 
     }
-  };
+  }
   employee.init({
+    joiningDate: DataTypes.DATE,
+    qualification: DataTypes.STRING,
     experienceDetail: DataTypes.STRING,
     totalExperience: DataTypes.STRING,
     name: DataTypes.STRING,
@@ -44,7 +50,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'employee',
-    tableName: 'employee',
-  });
+    tableName: 'employee'
+  })
   return employee;
 };

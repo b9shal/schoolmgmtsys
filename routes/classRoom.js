@@ -24,8 +24,11 @@ router.get("/list", async function(req, res){
     var status = 200
     const data = await classSection.findAll({
       attributes:[],
-      include: [{ model: section, attributes: ["id", "sectionName", "capacity"] },
-      { model: classRoom, attributes: ["id", "className", "classNo"] }]
+      include: [
+        { model: classRoom, attributes: ["id", "className", "classNo"] },
+        { model: section, attributes: ["sectionName"] }
+      ],
+      // group: "classNo"
     })
 
     res.status(status).json({
@@ -43,8 +46,7 @@ router.get("/list", async function(req, res){
     res.status(status).json({
       success,
       message
-    });
-    console.log(err)
+    })
   };
 });
 
@@ -84,11 +86,20 @@ router.post("/add", validate, async function(req, res) {
         console.log(err.message);
       })
       if(success) {
-        await transaction.commit()
         await classSection.create({
           classRoomId: id,
           sectionId
+        }).catch(err => {
+          message = "add failed"
+          status = 500
+          success = false
+          console.log(err.message)
         })
+        if(success){
+          await transaction.commit()
+        }else {
+          await transaction.rollback()
+        }
       }else {
         await transaction.rollback()
       }
@@ -99,6 +110,7 @@ router.post("/add", validate, async function(req, res) {
     status = 400
     console.log(err.message);
   };
+
   res.status(status).json({
     success,
     message,
@@ -147,14 +159,24 @@ router.patch("/edit/:id", validate, async function(req, res) {
       })
       if(success) {
 
-        await transaction.commit()
         await classSection.update({
           classRoomId: id,
           sectionId
         },
         {
           where: { classRoomId: id }
+        }).catch(err => {
+          console.log(err.message)
+          message = "edit failed"
+          success = false
+          status = 500
         })
+
+        if(success) {
+          await transaction.commit()
+        }else {
+          await transaction.rollback()
+        }
       }else {
         await transaction.rollback()
       }
@@ -177,7 +199,7 @@ router.delete("/delete/:id", async function(req, res){
 
   try {
     var success = true
-    var message = "add success"
+    var message = "delete success"
     var status = 200
     const id = req.params.id;
     const transaction = await models.sequelize.transaction()

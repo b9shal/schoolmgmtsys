@@ -13,7 +13,7 @@ const validate = [
   .isLength({ min: 1, max: 20 })
   .withMessage("vendor name should be atleast 1 char and atmost 20 chars long"),
   body("phone")
-  .isMobilePhone()
+  .isString()
   .withMessage("phone number should be a valid phone number"),
   body("address1")
   .isString()

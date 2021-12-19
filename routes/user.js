@@ -3,7 +3,7 @@ const router = express.Router();
 const chalk = require('chalk');
 const bcrypt = require("bcryptjs")
 const { body, validationResult } = require("express-validator")
-const { user } = require("../models");
+const { user } = require("../models")
 const jwt = require("jsonwebtoken")
 
 const validate = [

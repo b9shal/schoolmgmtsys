@@ -46,11 +46,10 @@ router.get("/list", async function(req, res){
     res.status(status).json({
       success,
       message
-    });
+    })
     console.log(err)
-  };
-
-});
+  }
+})
 
 
 //route to add an account

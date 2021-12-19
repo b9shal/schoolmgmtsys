@@ -16,7 +16,7 @@ const validate = [
   .isLength({ min: 1, max: 255 })
   .withMessage("ref should be atleast 1 char and atmost 20 chars long"),
   body("amount")
-  .isString()
+  .isNumeric()
   .withMessage("amount should be a number"),
   body("date")
   .isString()
@@ -69,7 +69,7 @@ router.get("/list", async function(req, res){
     var message = "list success"
     var status = 200
     const data = await deposit.findAll({
-      attributes: ["id", "ref", "amount", "description", "payVia", "date"],
+      attributes: ["id", "ref", "amount", "description", "payVia", "date", "attachment"],
       include: [
       { model: account, attributes: ["accountName"] },
       { model: voucherHead, attributes: ["voucherName"] }

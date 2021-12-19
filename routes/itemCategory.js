@@ -109,7 +109,7 @@ router.delete("/delete/:id", async function(req, res){
     var message = "delete success"
     var status = 200
     const id = req.params.id;
-    await vendor.destroy({ 
+    await itemCategory.destroy({ 
       where: {
         id
       }

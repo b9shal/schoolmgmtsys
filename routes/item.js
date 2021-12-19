@@ -20,8 +20,9 @@ router.get("/list", async function(req, res){
     var success = true
     var message = "list success"
     var status = 200
-    const data = await itemCategory.findAll({
-      include: [{ model: item, attributes: ["id", "itemName"] }]
+    const data = await item.findAll({
+      attributes: ["id", "itemName"],
+      include: [{ model: itemCategory, attributes: ["categoryName"] }]
     })
 
     res.status(status).json({
@@ -104,9 +105,10 @@ router.delete("/delete/:id", async function(req, res){
 
   try {
     var success = true
-    var message = "add success"
+    var message = "delete success"
     var status = 200
-    const id = req.params.id;
+    const id = await req.params.id;
+    console.log(id)
     await item.destroy({
       where: {
         id

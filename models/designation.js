@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
 
-      designation.hasMany(models.employeeDepartmentDesignation, { foreignKey: "designationId" })
+      designation.hasOne(models.employee, { foreignKey: "designationId" })
     }
   };
   designation.init({
@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'designation',
-    tableName: 'designation',
-  });
-  return designation;
-};
+    tableName: 'designation'
+  })
+  return designation
+}

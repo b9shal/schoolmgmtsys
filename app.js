@@ -36,6 +36,13 @@ const bookIssueRoute = require("./routes/bookIssue");
 const roleRoute = require("./routes/role");
 const departmentRoute = require("./routes/department");
 const designationRoute = require("./routes/designation");
+const subjectRoute = require("./routes/subject");
+const classAssignRoute = require("./routes/classAssign");
+const assignClassTeacherRoute = require("./routes/assignClassTeacher");
+const teacherRoute = require("./routes/teacher");
+const lessonPlanningRoute = require("./routes/lessonPlanning");
+const teacherScheduleRoute = require("./routes/teacherSchedule");
+const classScheduleRoute = require("./routes/classSchedule");
 const auth = require('./middleware/auth')
 
 let corsOptions = {
@@ -73,6 +80,8 @@ app.use("/api/studentCategory", studentCategoryRoute);
 app.use("/api/admission", admissionRoute);
 app.use("/api/class", classRoute);
 app.use("/api/section", sectionRoute);
+app.use("/api/subject", subjectRoute);
+app.use("/api/teacher", teacherRoute);
 app.use("/api/hostel", hostelRoute);
 app.use("/api/hostelCategory", hostelCategoryRoute);
 app.use("/api/hostelRoom", hostelRoomRoute);
@@ -88,7 +97,12 @@ app.use("/api/bookIssue", bookIssueRoute);
 app.use("/api/transaction", transactionRoute);
 app.use("/api/department", departmentRoute);
 app.use("/api/designation", designationRoute);
+app.use("/api/assignClassTeacher", assignClassTeacherRoute);
+app.use("/api/classAssign", classAssignRoute);
 app.use("/api/role", roleRoute);
+app.use("/api/lessonPlanning", lessonPlanningRoute);
+app.use("/api/teacherSchedule", teacherScheduleRoute);
+app.use("/api/classSchedule", classScheduleRoute);
 app.use(auth.isAuthenticate)
 
 

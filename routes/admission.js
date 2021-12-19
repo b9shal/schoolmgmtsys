@@ -280,7 +280,7 @@ router.delete("/delete/:id", async function(req, res){
     })
     console.log("data dfsladfasfd",data)
     if(data){
-      console.log("im in here")
+      console.log("im in here") 
       await admission.destroy({ 
         where: {
           id

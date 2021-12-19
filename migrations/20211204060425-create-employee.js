@@ -8,6 +8,12 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      joiningDate: {
+        type: Sequelize.DATE
+      },
+      qualification: {
+        type: Sequelize.STRING
+      },
       experienceDetail: {
         type: Sequelize.STRING
       },
