@@ -14,7 +14,7 @@ const validate = [
   .withMessage("category name should be atleast 1 char and atmost 255 chars long")
 ]
 
-//route to list vendors
+
 router.get("/list", async function(req, res){
 
   try {
@@ -49,7 +49,7 @@ router.get("/list", async function(req, res){
 });
 
 
-//route to add a vendor
+
 router.post("/add", validate, async function(req, res) {
 
   try {

@@ -13,10 +13,22 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
 
       classRoom.hasMany(models.classSection, { foreignKey: "classRoomId" })
+
       classRoom.hasMany(models.classAssign, { foreignKey: "classRoomId" })
+
       classRoom.hasOne(models.student, { foreignKey: "classRoomId" })
+
       classRoom.hasOne(models.assignClassTeacher, { foreignKey: "classRoomId" })
+
       classRoom.hasMany(models.lessonPlanning, { foreignKey: "classRoomId" })
+
+      classRoom.hasMany(models.markEntry, { foreignKey: "classRoomId" })
+
+      classRoom.hasMany(models.homeWork, { foreignKey: "classRoomId" })
+
+      classRoom.hasMany(models.liveClass, { foreignKey: "classRoomId" })
+
+      classRoom.hasMany(models.attachmentBook, { foreignKey: { name: "classRoomId", allowNull: false } })
     }
   };
   classRoom.init({

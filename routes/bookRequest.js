@@ -3,6 +3,7 @@ const router = express.Router();
 const chalk = require('chalk');
 const { bookRequest, book} = require("../models");
 const models = require("../models")
+const moment = require("moment")
 
 router.get("/list", async function(req, res){
 
@@ -44,7 +45,6 @@ router.get("/list", async function(req, res){
 });
 
 
-//route to add a vendor
 router.post("/add", async function(req, res) {
 
   try {
@@ -59,11 +59,12 @@ router.post("/add", async function(req, res) {
     dateOfExpiry,
     dateOfIssue
   } = await req.body;
+
   transaction = await models.sequelize.transaction()
   await bookRequest.create({ 
     bookId,
-    dateOfExpiry,
-    dateOfIssue
+    dateOfExpiry: moment(dateOfExpiry).format('YYYY-MM-DD'),
+    dateOfIssue: moment(dateOfIssue).format('YYYY-MM-DD')
   },
   {
     transaction
@@ -138,12 +139,12 @@ router.patch("/edit/:id", async function(req, res){
         bookId,
         dateOfExpiry,
         dateOfIssue
-      } = await req.body;
+      } = await req.body
       transaction = await models.sequelize.transaction()
       await bookRequest.update({ 
         bookId,
-        dateOfExpiry,
-        dateOfIssue
+        dateOfExpiry: moment(dateOfExpiry).format('YYYY-MM-DD'),
+        dateOfIssue: moment(dateOfIssue).format('YYYY-MM-DD')
       },
       {
         where: { id }
@@ -165,13 +166,12 @@ router.patch("/edit/:id", async function(req, res){
     success = false
     message = "edit fail"
     status = 400
-    console.log(err);
-  };
+    console.log(err)
+  }
   res.status(status).json({
     success,
-    message,
+    message
   })
-});
+})
 
 module.exports = router;
-

@@ -23,7 +23,6 @@ const validate = [
 ]
 
 
-//route to list fee types
 router.get("/list", async function(req, res){
 
   try {
@@ -49,7 +48,6 @@ router.get("/list", async function(req, res){
 })
 
 
-//route to add a fee type
 router.post("/add", validate, async function(req, res){
 
   try {
@@ -104,7 +102,6 @@ router.post("/add", validate, async function(req, res){
 })
 
 
-//route to update a fee type
 router.patch("/edit/:id", validate, async function(req, res){
   try {
 
@@ -165,7 +162,6 @@ router.patch("/edit/:id", validate, async function(req, res){
 })
 
 
-//route to delete a fee type
 router.delete("/delete/:id", async function(req, res){
   
   try {

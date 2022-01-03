@@ -7,6 +7,7 @@ const models = require("../models");
 const fs = require("fs")
 const multer = require('multer')
 const path = require("path")
+const moment = require("moment")
 
 const validate = [
   body("ref")
@@ -142,7 +143,7 @@ router.post("/add", upload, validate, async function(req, res) {
         voucherHeadId,
         ref,
         amount,
-        date,
+        date: moment(date).format('YYYY-MM-DD'),
         payVia,
         description,
         attachment: req.file.path
@@ -266,7 +267,7 @@ router.patch("/edit/:id", upload, validate, async function(req, res){
         voucherHeadId,
         ref,
         amount,
-        date,
+        date: moment(date).format('YYYY-MM-DD'),
         payVia,
         description,
         attachment: req.file.path

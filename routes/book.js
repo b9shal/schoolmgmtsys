@@ -6,6 +6,7 @@ const models  = require("../models");
 const path = require('path');
 const multer = require("multer");
 const fs = require("fs")
+const moment = require("moment")
 
 const validate = [
   body("title")
@@ -140,7 +141,7 @@ router.post("/add", upload, validate, async function(req, res) {
         isbn, 
         author, 
         edition, 
-        purchaseDate, 
+        purchaseDate: moment(purchaseDate).format('YYYY-MM-DD'), 
         publisher, 
         description, 
         price, 
@@ -220,7 +221,7 @@ router.patch("/edit/:id", validate, async function(req, res) {
         isbn, 
         author, 
         edition, 
-        purchaseDate, 
+        purchaseDate: moment(purchaseDate).format('YYYY-MM-DD'), 
         publisher, 
         description, 
         price, 

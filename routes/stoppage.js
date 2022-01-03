@@ -45,8 +45,9 @@ router.get("/list", async function(req, res){
       message
     })
     console.log(err)
-  };
+  }
 })
+
 
 
 router.post("/add", validate, async function(req, res) {
@@ -104,6 +105,7 @@ router.post("/add", validate, async function(req, res) {
 });
 
 
+
 router.patch("/edit/:id", validate, async function(req, res) {
 
   try {
@@ -152,14 +154,15 @@ router.patch("/edit/:id", validate, async function(req, res) {
     success = false
     message = "edit fail"
     status = 400
-    console.log(err);
-  };
+    console.log(err)
+  }
   res.status(status).json({
     success,
     message,
     validationError
   })
-});
+})
+
 
 
 router.delete("/delete/:id", async function(req, res){

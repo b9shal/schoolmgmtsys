@@ -15,8 +15,10 @@ module.exports = (sequelize, DataTypes) => {
       employee.belongsTo(models.department, { foreignKey: "departmentId"} )
       employee.belongsTo(models.designation, { foreignKey: "designationId"} )
       employee.belongsTo(models.role, { foreignKey: "roleId"})
-      employee.hasMany(models.employee, { foreignKey: "employeeId"})
-      employee.hasMany(models.lessonPlanning, { foreignKey: "employeeId"})
+
+      employee.hasMany(models.assignClassTeacher, { foreignKey: { name:"employeeId", allowNull: false } })
+
+      employee.hasMany(models.lessonPlanning, { foreignKey: "employeeId" })
 
     }
   }

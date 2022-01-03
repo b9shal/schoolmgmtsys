@@ -12,9 +12,9 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
 
-      assignClassTeacher.belongsTo(models.employee, { foreignKey: "employeeId"})
-      assignClassTeacher.belongsTo(models.classRoom, { foreignKey: "classRoomId"})
-      assignClassTeacher.belongsTo(models.section, { foreignKey: "sectionId"})
+      assignClassTeacher.belongsTo(models.employee, { foreignKey: { name: "employeeId", allowNull: false } })
+      assignClassTeacher.belongsTo(models.classRoom, { foreignKey: { name: "classRoomId", allowNull: false } })
+      assignClassTeacher.belongsTo(models.section, { foreignKey: { name: "sectionId", allowNull: false } })
     }
   };
   assignClassTeacher.init({

@@ -2,17 +2,18 @@ const express = require("express");
 const router = express.Router();
 const chalk = require('chalk');
 const { body, validationResult } = require("express-validator")
-const { studentCategory } = require("../models");
+const { marksDistribution, exam, examTerm } = require("../models");
 const models = require("../models");
 
 const validate = [
-  body("categoryName")
+  body("name")
   .isString()
-  .withMessage("category name should be a string")
+  .withMessage("exam name should be a string")
   .trim()
-  .isLength({ min: 1, max: 50 })
-  .withMessage("category name should be atleast 1 char and atmost 20 chars long")
+  .isLength({ min: 1, max: 255 })
+  .withMessage("exam should be atleast 1 char and atmost 255 chars long")
 ]
+
 
 router.get("/list", async function(req, res){
 
@@ -20,7 +21,19 @@ router.get("/list", async function(req, res){
     var success = true
     var message = "list success"
     var status = 200
-    const data = await studentCategory.findAll()
+    const data = await exam.findAll({
+      attributes: ["id", "examType", 'remarks'],
+      include: [
+        { model: examTerm, attributes: ["name"]},
+        { model: marksDistribution, attributes: ["name"]}
+      ]
+    })
+    .catch(err => {
+      success = false
+      message = "list fail"
+      status = 500
+      console.log(err.message)
+    })
 
     res.status(status).json({
       success,
@@ -39,7 +52,6 @@ router.get("/list", async function(req, res){
     });
     console.log(err)
   };
-
 });
 
 
@@ -67,12 +79,20 @@ router.post("/add", validate, async function(req, res) {
       })
     }else {
 
-      const {
-        categoryName
+      const { 
+        name,
+        examTermId,
+        marksDistributionId,
+        examType,
+        remarks
       } = await req.body
       transaction = await models.sequelize.transaction()
-      await studentCategory.create({
-        categoryName
+      await exam.create({ 
+        name,
+        examTermId,
+        marksDistributionId,
+        examType,
+        remarks
       },
       {
         transaction
@@ -86,7 +106,6 @@ router.post("/add", validate, async function(req, res) {
         await transaction.rollback()
       }else {
         await transaction.commit()
-
       }
     }
   }catch (err) {
@@ -110,7 +129,7 @@ router.delete("/delete/:id", async function(req, res){
     var message = "delete success"
     var status = 200
     const id = req.params.id;
-    await studentCategory.destroy({ 
+    await exam.destroy({ 
       where: {
         id
       }
@@ -160,10 +179,20 @@ router.patch("/edit/:id", validate, async function(req, res){
     }else {
       const id = req.params.id
       const { 
-        categoryName
+        name,
+        examTermId,
+        marksDistributionId,
+        examType,
+        remarks
       } = await req.body;
       transaction = await models.sequelize.transaction()
-      await studentCategory.update({categoryName},
+      await exam.update({ 
+        name,
+        examTermId,
+        marksDistributionId,
+        examType,
+        remarks
+      },
       {
         where: { id }
       },
@@ -173,13 +202,12 @@ router.patch("/edit/:id", validate, async function(req, res){
         message = "edit fail"
         status = 500
         success = false
-        console.log(chalk.red.bold("im from first inner catch",err.message))
       })
       if(!success) {
         await transaction.rollback()
       }else {
         await transaction.commit()
-      }    
+      }
     }
   }catch (err) {
     success = false

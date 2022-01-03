@@ -15,7 +15,7 @@ module.exports = {
         type: Sequelize.DECIMAL
       },
       date: {
-        type: Sequelize.STRING
+        type: Sequelize.DATE
       },
       payVia: {
         type: Sequelize.STRING

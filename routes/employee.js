@@ -4,6 +4,7 @@ const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs")
 const { department, designation, employee, role, user } = require("../models");
 const models  = require("../models");
+const moment = require("moment")
 
 const validate = [
   body("name")
@@ -110,7 +111,7 @@ router.get("/list", async function(req, res){
 });
 
 
-router.post("/add", validate, async function(req, res) {
+router.post("/add", upload, validate, async function(req, res) {
 
   try {
 
@@ -200,7 +201,7 @@ router.post("/add", validate, async function(req, res) {
           await employee.create({
             roleId,
             userId,
-            joiningDate,
+            joiningDate: moment(joiningDate).format('YYYY-MM-DD'),
             designationId,
             departmentId,
             qualification,
@@ -210,7 +211,7 @@ router.post("/add", validate, async function(req, res) {
             gender,
             religion,
             bloodGroup,
-            dob,
+            dob: moment(dob).format('YYYY-MM-DD'),
             mobile,
             email,
             presentAddress,
@@ -256,7 +257,7 @@ router.post("/add", validate, async function(req, res) {
 })
 
 
-router.patch("/edit/:id", validate, async function(req, res) {
+router.patch("/edit/:id", upload, validate, async function(req, res) {
 
   try {
 
@@ -318,7 +319,7 @@ router.patch("/edit/:id", validate, async function(req, res) {
       transaction = await models.sequelize.transaction()
       await employee.update({
         roleId,
-        joiningDate,
+        joiningDate: moment(joiningDate).format('YYYY-MM-DD'),
         designationId,
         departmentId,
         qualification,
@@ -328,7 +329,7 @@ router.patch("/edit/:id", validate, async function(req, res) {
         gender,
         religion,
         bloodGroup,
-        dob,
+        dob: moment(dob).format('YYYY-MM-DD'),
         mobile,
         email,
         presentAddress,

@@ -11,9 +11,7 @@ router.get("/list", async function(req, res) {
     var message = "add success"
     var status = 200
     
-    console.log(parseInt(req.query.teacherId))
     const employeeId = await parseInt(req.query.teacherId)
-    console.log(lessonPlanning)
     const data = await lessonPlanning.findAll({ 
       where: { employeeId },
       attributes: ["startDate", "endDate"],

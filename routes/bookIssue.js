@@ -3,6 +3,7 @@ const router = express.Router();
 const chalk = require('chalk');
 const { bookIssue, role , bookCategory, book, user} = require("../models");
 const models = require("../models")
+const moment = require("moment")
 
 router.get("/list", async function(req, res){
 
@@ -53,7 +54,6 @@ router.get("/list", async function(req, res){
 });
 
 
-//route to add a vendor
 router.post("/add", async function(req, res) {
 
   try {
@@ -76,7 +76,7 @@ router.post("/add", async function(req, res) {
     bookId,
     bookCategoryId,
     userId,
-    dateOfExpiry
+    dateOfExpiry: moment(dateOfExpiry).format('YYYY-MM-DD')
   },
   {
     transaction
@@ -160,7 +160,7 @@ router.patch("/edit/:id", async function(req, res){
         bookId,
         bookCategoryId,
         userId,
-        dateOfExpiry
+        dateOfExpiry: moment(dateOfExpiry).format('YYYY-MM-DD')
       },
       {
         where: { id }

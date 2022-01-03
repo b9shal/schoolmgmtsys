@@ -17,9 +17,10 @@ const validate = [
   .withMessage("account number should be a valid account number")
 ]
 
+
 //route to list accounts
 router.get("/list", async function(req, res){
-
+  console.log("user-agent", req.headers["user-agent"])
   try {
     var success = true
     var message = "list success"
@@ -36,7 +37,7 @@ router.get("/list", async function(req, res){
       success,
       message,
       data
-    });
+    })
     
   } catch (err) {
     success = false
@@ -114,37 +115,6 @@ router.post("/add", validate, async function(req, res) {
     success,
     message,
     validationError
-  })
-});
-
-
-//route to delete an account
-router.delete("/delete/:id", async function(req, res){
-
-  try {
-    var success = true
-    var message = "delete success"
-    var status = 200
-    const id = req.params.id;
-    await account.destroy({ 
-      where: { id }
-    }).catch(err => {
-      success = false
-      message = "delete fail"
-      status = 500 
-      console.log(err.message)
-    })
-
-  } catch (err) {
-    success = false
-    message = "delete fail"
-    status = 400
-    console.log(err);
-  };
-
-  res.status(status).json({
-    success,
-    message
   })
 });
 

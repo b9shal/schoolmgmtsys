@@ -42,8 +42,7 @@ router.post("/register", validate, async function(req, res){
         username,
         password,
         retypePassword,
-        roleId,
-        name
+        roleId
       } = req.body
 
       console.log(req.body)
@@ -59,8 +58,7 @@ router.post("/register", validate, async function(req, res){
           await user.create({
             username,
             password: encodedPass,
-            roleId,
-            name
+            roleId
           }).catch(err => {
             success = false
             message = "user registration failed"

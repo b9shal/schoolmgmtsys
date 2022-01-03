@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
 
       hostel.hasMany(models.hostelRoom, { foreignKey: "hostelId" })
+      hostel.hasMany(models.admission, { foreignKey: { name: "hostelId", allowNull: true } })
       hostel.belongsTo(models.hostelCategory, { foreignKey: "hostelCategoryId" })
     }
   };

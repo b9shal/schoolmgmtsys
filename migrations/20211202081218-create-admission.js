@@ -8,16 +8,8 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      std: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      section: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
       academicYear: {
-        type: Sequelize.STRING,
+        type: Sequelize.DATE,
         allowNull: false
       },
       registerNo: {
@@ -28,7 +20,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       admissionDate: {
-        type: Sequelize.STRING,
+        type: Sequelize.DATE,
         allowNull: false
       },
       firstName: {
@@ -37,7 +29,7 @@ module.exports = {
       },
       middleName: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
       lastName: {
         type: Sequelize.STRING,
@@ -51,7 +43,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       dob: {
-        type: Sequelize.STRING,
+        type: Sequelize.DATE,
         allowNull: false
       },
       motherTongue: {
@@ -82,19 +74,6 @@ module.exports = {
         type: Sequelize.STRING
       },
       photo: {
-        type: Sequelize.STRING
-      },
-      transportRoute: {
-        type: Sequelize.STRING
-      },
-      vehicleNo: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      hostelName: {
-        type: Sequelize.STRING
-      },
-      roomNo: {
         type: Sequelize.STRING
       },
       previousSchoolName: {

@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
 
       book.belongsTo(models.bookCategory, { foreignKey: "bookCategoryId" })
       book.hasOne(models.bookIssue, { foreignKey: "bookId" })
+      book.hasMany(models.bookRequest, { foreignKey: "bookId" })
     }
   };
   book.init({

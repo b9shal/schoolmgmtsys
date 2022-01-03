@@ -1,12 +1,13 @@
-const express = require("express");
-const router = express.Router();
-const chalk = require('chalk');
+const express = require("express")
+const router = express.Router()
+const chalk = require('chalk')
 const { body, validationResult } = require("express-validator")
 const { expense, voucherHead, account } = require("../models");
-const models = require("../models");
-const path = require('path');
-const multer = require("multer");
+const models = require("../models")
+const path = require('path')
+const multer = require("multer")
 const fs = require("fs")
+const moment = require("moment")
 
 const validate = [
   body("ref")
@@ -140,11 +141,11 @@ router.post("/add", upload, validate, async function(req, res) {
 
       transaction = await models.sequelize.transaction()
       await expense.create({ 
-        accountId: parseInt(accountId),
-        voucherHeadId: parseInt(voucherHeadId),
+        accountId,
+        voucherHeadId,
         ref,
         amount,
-        date,
+        date: moment(date).format('YYYY-MM-DD'),
         payVia,
         description,
         attachment: req.file.path
@@ -264,11 +265,11 @@ router.patch("/edit/:id", upload, validate, async function(req, res){
       } = await req.body;
       transaction = await models.sequelize.transaction()
       await expense.update({ 
-        accountId: parseInt(accountId),
-        voucherHeadId: parseInt(voucherHeadId),
+        accountId,
+        voucherHeadId,
         ref,
         amount,
-        date,
+        date: moment(date).format('YYYY-MM-DD'),
         payVia,
         description,
         attachment: req.file.path

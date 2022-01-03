@@ -19,7 +19,6 @@ const validate = [
 ]
 
 
-//route to list fee types
 router.get("/list", async function(req, res){
 
   try {
@@ -51,7 +50,6 @@ router.get("/list", async function(req, res){
 })
 
 
-//route to add a fee type
 router.post("/add", validate, async function(req, res){
 
   try {

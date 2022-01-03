@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
 
       hostelRoom.belongsTo(models.hostelCategory, { foreignKey: "hostelCategoryId" })
       hostelRoom.belongsTo(models.hostel, { foreignKey: "hostelId" })
+      hostelRoom.hasMany(models.admission, { foreignKey: { name: "hostelRoomId", allowNull: true } })
     }
   };
   hostelRoom.init({

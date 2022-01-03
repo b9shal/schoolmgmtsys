@@ -172,8 +172,8 @@ router.patch("/edit/:id", validate, async function(req, res) {
         subjectId, 
         employeeId: teacherId, 
         topic, 
-        startDate, 
-        endDate 
+        startDate: moment(startDate).format('YYYY-MM-DD'), 
+        endDate: moment(endDate).format('YYYY-MM-DD') 
       },
       {
         where: { id }

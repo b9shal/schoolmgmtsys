@@ -12,9 +12,10 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
 
-      role.hasOne(models.bookIssue, { foreignKey: "roleId" })
-      role.hasOne(models.user, { foreignKey: "roleId" })
-      role.hasOne(models.employee, { foreignKey: "roleId" })
+      role.hasMany(models.bookIssue, { foreignKey: "roleId" })
+      role.hasMany(models.user, { foreignKey: "roleId" })
+      role.hasMany(models.employee, { foreignKey: "roleId" })
+      role.hasMany(models.employeeAttendance, { foreignKey: "roleId" })
     }
   };
   role.init({

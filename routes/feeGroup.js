@@ -177,7 +177,6 @@ router.patch('/edit/:id', validate, async function (req, res) {
             })
         }
         if(!success) {
-            console.log("ddasdlfjlkajsdfkjakjkjkjasdfl")
             await transaction.rollback()
         }else {
             await models.feeTypeFeeGroup.destroy({
@@ -197,7 +196,6 @@ router.patch('/edit/:id', validate, async function (req, res) {
                     updatedAt: new Date
                 }) 
             })
-
             await models.sequelize.queryInterface
                 .bulkInsert(models.feeTypeFeeGroup.getTableName(),
                 feeTypeFeeGroupCollection,
@@ -209,12 +207,9 @@ router.patch('/edit/:id', validate, async function (req, res) {
                     status = 400
                     console.log(chalk.red.bold(err.message))
                 })
-
             if(success){
-                console.log("first commitccccccccccccccccccccccccc")
                 await transaction.commit() 
             }else {
-                console.log("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
                 await transaction.rollback()
             }
         }

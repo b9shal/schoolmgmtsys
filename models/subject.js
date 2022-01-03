@@ -13,7 +13,14 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
 
       subject.hasMany(models.classAssign, { foreignKey: "subjectId" })
+
       subject.hasMany(models.lessonPlanning, { foreignKey: "subjectId" })
+
+      subject.hasMany(models.markEntry, { foreignKey: "subjectId" })
+
+      subject.hasMany(models.homeWork, { foreignKey: "subjectId" })
+
+      subject.hasMany(models.attachmentBook, { foreignKey: "subjectId" })
     }
   };
   subject.init({

@@ -20,7 +20,9 @@ router.get("/list", async function(req, res){
     var success = true
     var message = "list success"
     var status = 200
-    const data = await role.findAll()
+    const data = await role.findAll({
+      attributes: ["id", "type"]
+    })
 
     res.status(status).json({
       success,
@@ -154,6 +156,7 @@ router.patch("/edit/:id", validate, async function(req, res) {
     validationError
   })
 });
+
 
 
 router.delete("/delete/:id", async function(req, res){

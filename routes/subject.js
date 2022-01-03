@@ -177,15 +177,15 @@ router.delete("/delete/:id", async function(req, res){
       where: {
         id
       }
-    });
+    })
     res.status(status).json({
       success,
       message
-    });
+    })
   } catch(err) {
     message = "delete fail"
     success = false
-    console.log(err);
+    console.log(err)
     status = 500
     res.status(status).json({
       success,
@@ -193,5 +193,6 @@ router.delete("/delete/:id", async function(req, res){
     });
   };
 });
+
 
 module.exports = router;

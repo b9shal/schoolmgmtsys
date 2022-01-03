@@ -16,6 +16,8 @@ module.exports = (sequelize, DataTypes) => {
       vehicleAssign.belongsTo(models.vehicle, { foreignKey: "vehicleId" })
       vehicleAssign.belongsTo(models.vehicleRoute, { foreignKey: "vehicleRouteId" })
       vehicleAssign.belongsTo(models.stoppAge, { foreignKey: "stoppAgeId" })
+
+      vehicleAssign.hasMany(models.admission, { foreignKey: { name: "vehicleAssignId", allowNull: true } })
     }
   };
   vehicleAssign.init({

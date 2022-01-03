@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   bookIssue.init({
-    dateOfExpiry: DataTypes.STRING
+    dateOfExpiry: DataTypes.DATE
   }, {
     sequelize,
     modelName: 'bookIssue',

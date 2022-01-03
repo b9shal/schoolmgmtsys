@@ -9,7 +9,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       dateOfExpiry: {
-        type: Sequelize.STRING
+        type: Sequelize.DATE
       },
       createdAt: {
         allowNull: false,

@@ -19,6 +19,7 @@ const validate = [
   .withMessage("voucher type should be one of Expense or Income")
 ]
 
+
 //route to list voucher
 router.get("/list", async function(req, res){
 
@@ -163,7 +164,7 @@ router.patch("/edit/:id", validate, async function(req, res){
         message = "edit fail"
         status = 500
         success = false
-        console.log(chalk.red.bold("im from first inner catch",err.message))
+        console.log(chalk.red.bold("im from first inner catch", err.message))
       })
       if(!success) {
         await transaction.rollback()
