@@ -49,6 +49,9 @@ router.post("/register", validate, async function(req, res){
       if(!isEmailExist) {
 
         if(password === retypePassword ) {
+
+          const salt = await bcrypt.genSalt(10)
+          const encodedPass = await bcrypt.hash(password, salt)
           
           await user.create({
             username,
@@ -56,7 +59,7 @@ router.post("/register", validate, async function(req, res){
             roleId
           }).catch(err => {
             success = false
-            message = "user registration failed"
+            message = "userrrrr registration failed"
             status = 500
             console.log(err.message)
           })
@@ -75,6 +78,7 @@ router.post("/register", validate, async function(req, res){
     success = false
     message = "user registration failed"
     status = 500
+    console.log(err.message)
   }
   res.status(status).json({
     success,
