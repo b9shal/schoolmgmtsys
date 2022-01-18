@@ -1,9 +1,11 @@
-const express = require("express");
-const router = express.Router();
-const { body, validationResult } = require("express-validator");
+const express = require("express")
+const router = express.Router()
+const { body, validationResult } = require("express-validator")
 const bcrypt = require("bcryptjs")
-const { department, designation, employee, role, user } = require("../models");
-const models  = require("../models");
+const { department, designation, employee, role, user } = require("../models")
+const models  = require("../models")
+const multer = require("multer")
+const fs = require("fs")
 const moment = require("moment")
 
 const validate = [
@@ -37,7 +39,7 @@ const validate = [
 ]
 
 const storage = multer.diskStorage({
-  destination: './public/uploads/emplyeeImages',
+  destination: './public/uploads/employeeImages',
   filename: function (req, file, cb) {
     const datetimestamp = Date.now()
     cb(null, file.fieldname + '-' + datetimestamp + '.' + file.originalname.split('.')[file.originalname.split('.').length -1])
@@ -80,13 +82,13 @@ router.get("/list", async function(req, res){
     const data = await employee.findAll({
       include: [
         {
-          model: role, attributes: ["id", "type"]
+          model: role, attributes: ["type"]
         },
         {
-          model: department, attributes: ["id", "departymentName"]
+          model: department, attributes: ["departmentName"]
         },
         {
-          model: designation, attributes: ["id", "designationName"]
+          model: designation, attributes: ["designationName"]
         }
       ]
     })
@@ -216,7 +218,7 @@ router.post("/add", upload, validate, async function(req, res) {
             email,
             presentAddress,
             permanentAddress,
-            photo,
+            photo: req.file.path,
             skipLogAuth,
             username,
             password,
@@ -312,10 +314,6 @@ router.patch("/edit/:id", upload, validate, async function(req, res) {
         accountNumber
       } = await req.body
 
-      const {
-        photo
-      } = req.file.path
-
       transaction = await models.sequelize.transaction()
       await employee.update({
         roleId,
@@ -334,7 +332,7 @@ router.patch("/edit/:id", upload, validate, async function(req, res) {
         email,
         presentAddress,
         permanentAddress,
-        photo,
+        photo: req.file.path,
         skipLogAuth,
         username,
         password,

@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 
+const auth = require('./middleware/auth')
+const userRoute = require("./routes/user");
 const feeTypeRoute = require("./routes/feeType")
 const feeGroupRoute = require("./routes/feeGroup")
 const vendorRoute = require("./routes/vendor");
@@ -20,7 +22,6 @@ const admissionCategoryRoute = require("./routes/admissionCategory");
 const admissionRoute = require("./routes/admission");
 const classRoute = require("./routes/classRoom");
 const sectionRoute = require("./routes/section");
-const userRoute = require("./routes/user");
 const hostelRoute = require("./routes/hostel");
 const hostelCategoryRoute = require("./routes/hostelCategory");
 const hostelRoomRoute = require("./routes/hostelRoom");
@@ -45,6 +46,7 @@ const teacherScheduleRoute = require("./routes/teacherSchedule");
 const classScheduleRoute = require("./routes/classSchedule");
 const studentAttendanceRoute = require("./routes/studentAttendance");
 const employeeAttendanceRoute = require("./routes/employeeAttendance");
+const employeeRoute = require("./routes/employee");
 const examRoute = require("./routes/exam");
 const assignTeacherPrivilegeRoute = require("./routes/assignTeacherPrivilege");
 const examTermRoute = require("./routes/examTerm");
@@ -53,7 +55,6 @@ const marksDistributionRoute = require("./routes/markDistribution");
 const attachmentBookRoute = require("./routes/attachmentBook");
 const attachmentBookTypeRoute = require("./routes/attachmentBookType");
 const schoolSettingRoute = require("./routes/schoolSetting");
-const auth = require('./middleware/auth')
 
 let corsOptions = {
   origin: 'http://localhost:3000',
@@ -72,7 +73,7 @@ app.use(express.static(`${__dirname}/public`))
 
 
 //routes
-app.use("/api/user", userRoute);
+app.use("/api/user", userRoute)
 app.use("/api/feeGroup", feeGroupRoute);
 app.use("/api/feeType", feeTypeRoute);
 app.use("/api/item", itemRoute);
@@ -115,6 +116,7 @@ app.use("/api/teacherSchedule", teacherScheduleRoute);
 app.use("/api/classSchedule", classScheduleRoute);
 app.use("/api/studentAttendance", studentAttendanceRoute);
 app.use("/api/employeeAttendance", employeeAttendanceRoute);
+app.use("/api/employee", employeeRoute);
 app.use("/api/assignTeacherPrivilege", assignTeacherPrivilegeRoute);
 app.use("/api/exam", examRoute);
 app.use("/api/examTerm", examTermRoute);
@@ -124,6 +126,7 @@ app.use("/api/attachmentBook", attachmentBookRoute);
 app.use("/api/attachmentBookType", attachmentBookTypeRoute);
 app.use("/api/schoolSetting", schoolSettingRoute);
 app.use(auth.isAuthenticate)
+
 
 
 app.use((error,req,res,next)=>{

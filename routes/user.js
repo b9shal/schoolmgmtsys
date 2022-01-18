@@ -1,6 +1,6 @@
-const express = require("express");
-const router = express.Router();
-const chalk = require('chalk');
+const express = require("express")
+const router = express.Router()
+const chalk = require('chalk')
 const bcrypt = require("bcryptjs")
 const { body, validationResult } = require("express-validator")
 const { user } = require("../models")
@@ -22,7 +22,6 @@ router.post("/register", validate, async function(req, res){
     var message = "user registration successful"
     var status = 200
     var validationError = null
-    var token = ""
     const errors = validationResult(req)
 
     if(!errors.isEmpty()) {
@@ -45,15 +44,11 @@ router.post("/register", validate, async function(req, res){
         roleId
       } = req.body
 
-      console.log(req.body)
       const isEmailExist = await user.findOne({ where: { username } })
 
       if(!isEmailExist) {
 
         if(password === retypePassword ) {
-
-          const salt = await bcrypt.genSalt(10)
-          const encodedPass = await bcrypt.hash(password, salt)
           
           await user.create({
             username,
@@ -65,9 +60,6 @@ router.post("/register", validate, async function(req, res){
             status = 500
             console.log(err.message)
           })
-          if(success) {
-            token = jwt.sign({user}, process.env.API_SECRET)
-          }
         }else {
           message = "passwords donot match"
           status = 400
@@ -79,21 +71,19 @@ router.post("/register", validate, async function(req, res){
         success = false
       }
     }
-  } catch (err) {
+  }catch (err) {
     success = false
     message = "user registration failed"
     status = 500
-    console.log(err)
   }
   res.status(status).json({
     success,
-    message,
-    token
+    message
   });
 });
 
 
-router.post("/login", validate, async function(req, res) {
+router.post("/login", validate, async function(req, res, next) {
 
   try {
 
@@ -135,8 +125,9 @@ router.post("/login", validate, async function(req, res) {
       })
       if(User){
         const ismatch = await bcrypt.compare(password, User.password)
+
         if(ismatch) {
-          token = await jwt.sign({User}, process.env.API_SECRET)
+          token = await jwt.sign({username}, process.env.API_SECRET)
         }else {
           success = false
           status = 401
