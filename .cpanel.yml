@@ -1,5 +1,5 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/kushmitechcom/repositories/schoolmgmtsys
+    - export DEPLOYPATH=/home/kushmitechcom/repositories/schoolmgmtsys
     - /bin/cp * $DEPLOYPATH
