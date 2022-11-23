@@ -63,17 +63,15 @@ let corsOptions = {
 };
 
 const app = express()
-app.use(cors(corsOptions))
-app.use(express.json({ extended: true }))
+app.use(cors());
+app.use(express.json({ extended: true }));
 
 dotenv.config();
-const PORT = process.env.PORT || 5004;
 
-app.use(express.static(`${__dirname}/public`))
-
+app.use(express.static(`${__dirname}/public`));
 
 //routes
-app.use("/api/user", userRoute)
+app.use("/api/user", userRoute);
 app.use("/api/feeGroup", feeGroupRoute);
 app.use("/api/feeType", feeTypeRoute);
 app.use("/api/item", itemRoute);
@@ -125,25 +123,8 @@ app.use("/api/marksDistribution", marksDistributionRoute);
 app.use("/api/attachmentBook", attachmentBookRoute);
 app.use("/api/attachmentBookType", attachmentBookTypeRoute);
 app.use("/api/schoolSetting", schoolSettingRoute);
-app.use(auth.isAuthenticate)
+app.use(auth.isAuthenticate);
 
 
-
-app.use((error,req,res,next)=>{
-  res.status(error.status ||  500);
-  // res.json({
-  //     error:{
-  //         message: error.message,
-  //         status : error.status
-  //     }
-  // })
-  // if(error.errorCode || error.message == "Error checking permissions to access resource"){
-  //   //    acl redirect with message
-  //   res.render('error/aclError',{layout:"login",title:"Home",message:error.message,errorCode:error.status,errorCodeAcl:error.errorCode});
-  // }else{
-  //   res.render('error/404',{title:"Home",message:error.message,errorCode:error.status,errorCodeAcl:error.errorCode});
-  // }
-
-});
 
 app.listen(5000, () => console.log(`App listening on port 5000!`));
