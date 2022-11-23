@@ -21,9 +21,9 @@ module.exports = {
         } catch (err) {
             console.log(chalk.red.bold("auth.js 13 ", err.message))
             res.status(401).send({
-                msg: 'Auth failed',
-                success: false
-            })
+              msg: "Auth failed for this user",
+              success: false,
+            });
         }
 
     }

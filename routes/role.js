@@ -30,13 +30,12 @@ router.get("/list", async function(req, res){
     
   } catch (err) {
     success = false
-    message = "list fail"
+    message = "list fail for role";
     status = 500;
 
     res.json({
       success,
-      message,
-      error: err,
+      error: `${err}`,
     });
   };
 })
